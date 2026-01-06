@@ -1,4 +1,4 @@
-name: Build Hugo Site
+name: Build and Deploy Hugo Site
 
 on:
   push:
@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,3 +26,10 @@ jobs:
 
       - name: Build
         run: hugo --minify
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
