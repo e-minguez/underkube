@@ -1,0 +1,287 @@
+<!doctype html><html lang=en-us><head><title>SCC assignments and permissions in OpenShift | Underkube</title>
+<meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="Tips, tricks and all things k8s/OpenShift/containers/etc"><meta name=generator content="Hugo 0.128.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon><meta name=keywords content="openshift,permissions,rbac,scc"><link rel=canonical href=https://www.underkube.com/custom-scc/><script>!function(e,t){var n,s,o,i;t.__SV||(window.posthog=t,t._i=[],t.init=function(a,r,c){function d(e,t){var n=t.split(".");2==n.length&&(e=e[n[0]],t=n[1]),e[t]=function(){e.push([t].concat(Array.prototype.slice.call(arguments,0)))}}(n=e.createElement("script")).type="text/javascript",n.crossOrigin="anonymous",n.async=!0,n.src=r.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(i=e.getElementsByTagName("script")[0]).parentNode.insertBefore(n,i);var l=t;for(void 0!==c?l=t[c]=[]:c="posthog",l.people=l.people||[],l.toString=function(e){var t="posthog";return"posthog"!==c&&(t+="."+c),e||(t+=" (stub)"),t},l.people.toString=function(){return l.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),s=0;s<o.length;s++)d(l,o[s]);t._i.push([a,r,c])},t.__SV=1)}(document,window.posthog||[]),posthog.init("phc_uEqii0McatXuj5LJOegCHPbPJOk3px5r9cF2qGV0AiG",{api_host:"https://eu.i.posthog.com",person_profiles:"identified_only"})</script></head><body><nav class=navigation><a href=/><span class=arrow>←</span>Home</a>
+<a href=/posts>All Posts</a>
+<a href=/tags>Tags</a>
+<a href=/about>About</a>
+<a href=https://github.com/e-minguez/underkube>GitHub</a>
+<a class=button href>Subscribe</a></nav><main class=main><section id=single><h1 class=title>SCC assignments and permissions in OpenShift</h1><div class=tip><time datetime="2020-10-01 10:18:42 +0200 +0200">Oct 1, 2020</time>
+<span class=split>·
+</span><span>1495 words
+</span><span class=split>·
+</span><span>8 minute read</span></div><div class=content><h1 id=sccs>SCCs <a href=#sccs class=anchor>🔗</a></h1><p>There are tons of information out there about SCCs, but in this post we will be
+focused on how to create and use a custom SCC only.</p><p>See the OpenShift official documentation on <a href=https://docs.openshift.com/container-platform/4.5/authentication/managing-security-context-constraints.html target=_blank rel=noopener>Managing Security Context Constraints</a> for more details.</p><h2 id=custom-scc>Custom SCC <a href=#custom-scc class=anchor>🔗</a></h2><p>In the event of requiring a custom SCC, there are a few steps that need to be
+done to be able to use the SCC properly.</p><h3 id=minimal-capabilities>Minimal capabilities <a href=#minimal-capabilities class=anchor>🔗</a></h3><p>The best way to create a custom SCC would be to build it based on the most
+restricted one (hint: its name is <code>restricted</code>) and then start adding
+capabilities and permissions depending on the application requisites.</p><p>In this example we are going to create a custom SCC based on the restricted one
+but adding permissions to use hostpath:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>cat <span style=color:#e6db74>&lt;&lt; EOF | oc apply -f -
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>apiVersion: security.openshift.io/v1
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>kind: SecurityContextConstraints
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowHostDirVolumePlugin: true
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowHostIPC: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowHostNetwork: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowHostPID: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowHostPorts: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowPrivilegeEscalation: true
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowPrivilegedContainer: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>allowedCapabilities: null
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>fsGroup:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: MustRunAs
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>metadata:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  name: mycustomscc
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>readOnlyRootFilesystem: false
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>requiredDropCapabilities:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- KILL
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- MKNOD
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- SETUID
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- SETGID
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>runAsUser:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: MustRunAsRange
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>seLinuxContext:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: MustRunAs
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>supplementalGroups:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>  type: RunAsAny
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>volumes:
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- configMap
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- downwardAPI
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- emptyDir
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- persistentVolumeClaim
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- projected
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- secret
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>- hostpath
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span></code></pre></div><p>NOTE: The SCC management procedures are restricted to the cluster-admin user
+for security reasons.</p><h2 id=scc-assignation-and-permissions>SCC assignation and permissions <a href=#scc-assignation-and-permissions class=anchor>🔗</a></h2><p>In order to be able to use a custom SCC, it is required the user or
+serviceaccount running the pod has access to the custom SCC.</p><p>This can be achieved in two different ways:</p><ul><li>Modifying the SCC to set users/groups.</li><li>Using RBAC (roles, rolebindings, etc.)</li></ul><p>But first, let&rsquo;s do a regular deployment:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc login -u nonadmin -p whatever api.example.com
+</span></span><span style=display:flex><span>oc new-project myproject
+</span></span><span style=display:flex><span>oc create deployment hello-openshift --image<span style=color:#f92672>=</span>openshift/hello-openshift
+</span></span></code></pre></div><p>Note: As an exercise, you can try to create those objects using just yaml files.</p><p>The pod will have the restricted SCC by default:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get po -l app<span style=color:#f92672>=</span>hello-openshift -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.items[*].metadata.annotations.openshift\.io/scc}&#39;</span>
+</span></span><span style=display:flex><span>restricted
+</span></span></code></pre></div><p>Let&rsquo;s create a serviceaccount:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc create sa myserviceaccount
+</span></span></code></pre></div><p>Note: As an exercise, you can try to create the service using just a yaml file.</p><p>And then, let&rsquo;s modify the deployment to use that serviceaccount instead:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc set serviceaccount deployment/hello-openshift myserviceaccount
+</span></span></code></pre></div><p>This will modify the deployment object to set the <code>serviceAccountName</code> parameter
+(<code>serviceAccount</code> is currently deprecated, see <code>oc explain pod.spec</code> for more
+information.)</p><p>Hint: You can use <code>oc patch</code> or <code>oc edit</code> as well.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get deployment hello-openshift -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.spec.template.spec.serviceAccountName}&#39;</span>
+</span></span><span style=display:flex><span>myserviceaccount
+</span></span></code></pre></div><p>Let&rsquo;s modify the deployment to use a hostPath volume:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc patch deployment/hello-openshift -p <span style=color:#e6db74>&#39;{&#34;spec&#34;:{&#34;template&#34;:{&#34;spec&#34;:{&#34;$setElementOrder/containers&#34;:[{&#34;name&#34;:&#34;hello-openshift&#34;}],&#34;containers&#34;:[{&#34;name&#34;:&#34;hello-openshift&#34;,&#34;volumeMounts&#34;:[{&#34;mountPath&#34;:&#34;/empty&#34;,&#34;name&#34;:&#34;myvolume&#34;}]}],&#34;volumes&#34;:[{&#34;hostPath&#34;:{&#34;path&#34;:&#34;/var/empty&#34;,&#34;type&#34;:&#34;Directory&#34;},&#34;name&#34;:&#34;myvolume&#34;}]}}}}&#39;</span> deployment/hello-openshift
+</span></span></code></pre></div><p>Hum&mldr; nothing happens&mldr; let&rsquo;s see the events:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get events
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>42s         Warning   FailedCreate        replicaset/hello-openshift-855649976d   Error creating: pods <span style=color:#e6db74>&#34;hello-openshift-855649976d-&#34;</span> is forbidden: unable to validate against any security context constraint: <span style=color:#f92672>[</span>spec.volumes<span style=color:#f92672>[</span>0<span style=color:#f92672>]</span>: Invalid value: <span style=color:#e6db74>&#34;hostPath&#34;</span>: hostPath volumes are not allowed to be used<span style=color:#f92672>]</span>
+</span></span></code></pre></div><p>It seems the pod is not allowed to use <code>hostPath</code>&mldr; as expected. This means we
+need to give that serviceaccount permission to use the custom SCC.</p><h2 id=method-a-modify-the-scc-definition>Method A: Modify the SCC definition <a href=#method-a-modify-the-scc-definition class=anchor>🔗</a></h2><p>This method involves modifying the SCC to add the serviceaccount to the list of
+users (or groups), as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>users:
+</span></span><span style=display:flex><span>- &lt;user&gt;
+</span></span><span style=display:flex><span>- system:serviceaccount:&lt;namespace&gt;:&lt;serviceaccountname&gt;
+</span></span></code></pre></div><p>Assigning users, groups or service accounts directly to an SCC retains
+cluster-wide scope and require cluster-admin permissions:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>system:admin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc patch scc mycustomscc --type<span style=color:#f92672>=</span>merge -p <span style=color:#e6db74>&#39;{&#34;users&#34;:[&#34;system:serviceaccount:myproject:myserviceaccount&#34;]}&#39;</span>
+</span></span></code></pre></div><p>Let&rsquo;s see now:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>nonadmin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po -l app<span style=color:#f92672>=</span>hello-openshift -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.items[*].metadata.annotations.openshift\.io/scc}&#39;</span>
+</span></span><span style=display:flex><span>mycustomscc
+</span></span></code></pre></div><p>Nice!</p><p>Before continuing, let&rsquo;s clean the SCC:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>system:admin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc patch scc mycustomscc --type<span style=color:#f92672>=</span>merge -p <span style=color:#e6db74>&#39;{&#34;users&#34;:[]}&#39;</span>
+</span></span></code></pre></div><p>And remove the pod:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>nonadmin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc delete <span style=color:#66d9ef>$(</span>oc get po -o name -l app<span style=color:#f92672>=</span>hello-openshift<span style=color:#66d9ef>)</span>
+</span></span></code></pre></div><h2 id=method-b-scc-rbac>Method B: SCC RBAC <a href=#method-b-scc-rbac class=anchor>🔗</a></h2><p>Since OpenShift 3.11, you can specify SCCs as a resource that is handled by
+RBAC. This allows you to scope access to the SCCs to a certain project or to the
+entire cluster.</p><p>This means that in order for the serviceaccount to use the SCC, you need to
+create a role (or clusterrole) with the proper permissions and a rolebinding
+(or clusterrolebinding) for the serviceaccount to that role. It sounds
+complicated but it is not. Let&rsquo;s do it with just a single command:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>system:admin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc create role mycustomsccrole --verb<span style=color:#f92672>=</span>use --resource<span style=color:#f92672>=</span>scc --resource-name<span style=color:#f92672>=</span>mycustomscc -n myproject
+</span></span></code></pre></div><p>This will create a role such as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: rbac.authorization.k8s.io/v1
+</span></span><span style=display:flex><span>kind: Role
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: mycustomsccrole
+</span></span><span style=display:flex><span>  namespace: myproject
+</span></span><span style=display:flex><span>rules:
+</span></span><span style=display:flex><span>- apiGroups:
+</span></span><span style=display:flex><span>  - security.openshift.io
+</span></span><span style=display:flex><span>  resourceNames:
+</span></span><span style=display:flex><span>  - mycustomscc
+</span></span><span style=display:flex><span>  resources:
+</span></span><span style=display:flex><span>  - securitycontextconstraints
+</span></span><span style=display:flex><span>  verbs:
+</span></span><span style=display:flex><span>  - use
+</span></span></code></pre></div><p>Note: You can create the role using the yaml file instead the <code>oc create role</code> command.</p><p>And we need to give access to that role to the serviceaccount (meaning, creating a rolebinding):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc adm policy add-role-to-user mycustomsccrole -z myserviceaccount --role-namespace<span style=color:#f92672>=</span>myproject
+</span></span></code></pre></div><p>This will create a rolebinding to link the service account to the role:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apiVersion: rbac.authorization.k8s.io/v1
+</span></span><span style=display:flex><span>kind: RoleBinding
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: mycustomsccrole
+</span></span><span style=display:flex><span>  namespace: myproject
+</span></span><span style=display:flex><span>roleRef:
+</span></span><span style=display:flex><span>  apiGroup: rbac.authorization.k8s.io
+</span></span><span style=display:flex><span>  kind: ClusterRole
+</span></span><span style=display:flex><span>  name: mycustomsccrole
+</span></span><span style=display:flex><span>subjects:
+</span></span><span style=display:flex><span>- kind: ServiceAccount
+</span></span><span style=display:flex><span>  name: myserviceaccount
+</span></span><span style=display:flex><span>  namespace: testscc
+</span></span></code></pre></div><p>Note: You can create the rolebinding using the yaml file instead the <code>oc adm policy add-role-to-user</code> command.</p><p>To verify:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc whoami
+</span></span><span style=display:flex><span>nonadmin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc adm policy who-can use scc mycustomscc | grep myserviceaccount
+</span></span><span style=display:flex><span>        system:serviceaccount:myproject:myserviceaccount
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po -l app<span style=color:#f92672>=</span>hello-openshift -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.items[*].metadata.annotations.openshift\.io/scc}&#39;</span>
+</span></span><span style=display:flex><span>mycustomscc
+</span></span></code></pre></div><p>Nice!</p><p>NOTE: In recent versions of OCP (since <a href=https://github.com/openshift/oc/pull/412 target=_blank rel=noopener>https://github.com/openshift/oc/pull/412</a>
+was merged), the <code>oc adm policy add-scc-to-user</code> command creates a cluster role:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc adm policy add-scc-to-user mycustomscc system:serviceaccount:myproject:myserviceaccount
+</span></span><span style=display:flex><span>clusterrole.rbac.authorization.k8s.io/system:openshift:scc:mycustomscc added: <span style=color:#e6db74>&#34;myserviceaccount&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get clusterrole system:openshift:scc:mycustomscc -o yaml
+</span></span><span style=display:flex><span>apiVersion: rbac.authorization.k8s.io/v1
+</span></span><span style=display:flex><span>kind: ClusterRole
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: system:openshift:scc:mycustomscc
+</span></span><span style=display:flex><span>rules:
+</span></span><span style=display:flex><span>- apiGroups:
+</span></span><span style=display:flex><span>  - security.openshift.io
+</span></span><span style=display:flex><span>  resourceNames:
+</span></span><span style=display:flex><span>  - mycustomscc
+</span></span><span style=display:flex><span>  resources:
+</span></span><span style=display:flex><span>  - securitycontextconstraints
+</span></span><span style=display:flex><span>  verbs:
+</span></span><span style=display:flex><span>  - use
+</span></span></code></pre></div><p>And a <code>clusterrolebinding</code> to link that clusterrole with the service account:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get clusterrolebinding system:openshift:scc:mycustomscc -o yaml
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>apiVersion: rbac.authorization.k8s.io/v1
+</span></span><span style=display:flex><span>kind: ClusterRoleBinding
+</span></span><span style=display:flex><span>metadata:
+</span></span><span style=display:flex><span>  name: system:openshift:scc:mycustomscc
+</span></span><span style=display:flex><span>roleRef:
+</span></span><span style=display:flex><span>  apiGroup: rbac.authorization.k8s.io
+</span></span><span style=display:flex><span>  kind: ClusterRole
+</span></span><span style=display:flex><span>  name: system:openshift:scc:mycustomscc
+</span></span><span style=display:flex><span>subjects:
+</span></span><span style=display:flex><span>- kind: ServiceAccount
+</span></span><span style=display:flex><span>  name: myserviceaccount
+</span></span><span style=display:flex><span>  namespace: myproject
+</span></span></code></pre></div><h2 id=priorities>Priorities <a href=#priorities class=anchor>🔗</a></h2><p>When a pod request is created, the admission controller evaluates the request
+and assign an SCC depending on the permissions the pod requests as well as the
+permissions the user/sa running this pod is allowed.</p><p>The SCCs have a <code>priority</code> field to affect the ordering. This means:</p><ul><li>Highest priority first, no priority is considered 0</li><li>If priorities are equal, the SCCs will be sorted from most restrictive to least restrictive</li><li>If both priorities and restrictions are equal the SCCs will be sorted by name</li></ul><p>See [the admission controller code]
+(<a href=https://github.com/openshift/apiserver-library-go/blob/master/pkg/securitycontextconstraints/sccadmission/admission.go target=_blank rel=noopener>https://github.com/openshift/apiserver-library-go/blob/master/pkg/securitycontextconstraints/sccadmission/admission.go</a>)
+if you are brave enough to understand it :)</p><p>The out-of-the-box SCCs included in OpenShift 4 and their priorities are:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get scc -o custom-columns<span style=color:#f92672>=</span>NAME:.metadata.name,PRIORITY:.priority
+</span></span><span style=display:flex><span>NAME                          PRIORITY
+</span></span><span style=display:flex><span>anyuid                        <span style=color:#ae81ff>10</span>
+</span></span><span style=display:flex><span>hostaccess                    &lt;nil&gt;
+</span></span><span style=display:flex><span>hostmount-anyuid              &lt;nil&gt;
+</span></span><span style=display:flex><span>hostnetwork                   &lt;nil&gt;
+</span></span><span style=display:flex><span>node-exporter                 &lt;nil&gt;
+</span></span><span style=display:flex><span>nonroot                       &lt;nil&gt;
+</span></span><span style=display:flex><span>privileged                    &lt;nil&gt;
+</span></span><span style=display:flex><span>restricted                    &lt;nil&gt;
+</span></span></code></pre></div><h2 id=warning-about-priorities>Warning about priorities <a href=#warning-about-priorities class=anchor>🔗</a></h2><p>Some service accounts included by default in OpenShift are granted
+cluster-admin permissions, meaning they can perform any action on any resource,
+including using any SCC, despite of not having being granted it explicitly.</p><p>In our case, we only give access to the <code>myserviceaccount</code> service account to
+use the <code>mycustomscc</code> SCC&mldr; but in fact, there are quite a few service accounts
+allowed to use it:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc adm policy who-can use scc mycustomscc
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Users:  admin
+</span></span><span style=display:flex><span>        system:admin
+</span></span><span style=display:flex><span>        system:serviceaccount:myproject:myserviceaccount
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-apiserver-operator:openshift-apiserver-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-apiserver:openshift-apiserver-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-authentication-operator:authentication-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-authentication:oauth-openshift
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-cluster-node-tuning-operator:cluster-node-tuning-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-cluster-storage-operator:csi-snapshot-controller-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-cluster-version:default
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-config-operator:openshift-config-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-controller-manager-operator:openshift-controller-manager-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-etcd-operator:etcd-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-etcd:installer-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-apiserver-operator:kube-apiserver-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-apiserver:installer-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-apiserver:localhost-recovery-client
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-controller-manager-operator:kube-controller-manager-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-controller-manager:installer-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-controller-manager:localhost-recovery-client
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-scheduler-operator:openshift-kube-scheduler-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-scheduler:installer-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-scheduler:localhost-recovery-client
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-storage-version-migrator-operator:kube-storage-version-migrator-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-kube-storage-version-migrator:kube-storage-version-migrator-sa
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-machine-config-operator:default
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-network-operator:default
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-operator-lifecycle-manager:olm-operator-serviceaccount
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-service-ca-operator:service-ca-operator
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-service-catalog-removed:openshift-service-catalog-apiserver-remover
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-service-catalog-removed:openshift-service-catalog-controller-manager-remover
+</span></span><span style=display:flex><span>Groups: system:cluster-admins
+</span></span><span style=display:flex><span>        system:masters
+</span></span></code></pre></div><p>This means any of those serviceaccounts can effectively use the custom SCC and
+if the priority is higher than the one intended to be used, things can go wrong.
+For more information see <a href=https://access.redhat.com/solutions/4727461 target=_blank rel=noopener>this KCS article</a></p><p>Let&rsquo;s see it in action. Modify the <code>mycustomscc</code> to have higher priority than
+the default ones (any number higher than 10 would be enough&mldr; let&rsquo;s choose 99):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc patch scc mycustomscc --type merge -p <span style=color:#e6db74>&#39;{&#34;priority&#34;:99}&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get scc mycustomscc -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.priority}&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#ae81ff>99</span>
+</span></span></code></pre></div><p>Now, let&rsquo;s force the admission controller to &lsquo;recalculate&rsquo; the SCCs for one of
+the serviceaccounts that can use any SCC. In this example, we will choose one of
+the oauth pods:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get po -n openshift-authentication
+</span></span><span style=display:flex><span>NAME                               READY   STATUS             RESTARTS   AGE
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-djg89   1/1     Running            <span style=color:#ae81ff>0</span>          3d4h
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-hrrkf   1/1     Running            <span style=color:#ae81ff>0</span>          3d4h
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po -n openshift-authentication -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{range .items[*]}{.metadata.annotations.openshift\.io/scc}{&#34;\t&#34;}{.metadata.name}{&#34;\t&#34;}{.metadata.namespace}{&#34;\n&#34;}{end}&#39;</span>
+</span></span><span style=display:flex><span>anyuid	oauth-openshift-5c4466d8f6-djg89	openshift-authentication
+</span></span><span style=display:flex><span>anyuid	oauth-openshift-5c4466d8f6-hrrkf	openshift-authentication
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get deploy -n openshift-authentication oauth-openshift -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{.spec.template.spec.serviceAccountName}&#39;</span>
+</span></span><span style=display:flex><span>oauth-openshift
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc adm policy who-can use scc mycustomscc | grep oauth-openshift
+</span></span><span style=display:flex><span>        system:serviceaccount:openshift-authentication:oauth-openshift
+</span></span></code></pre></div><p>They are using the <code>anyuid</code> SCC, but they can use any&mldr; and based on the order,
+<code>mycustomscc</code> will win:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc get scc -o custom-columns<span style=color:#f92672>=</span>NAME:.metadata.name,PRIORITY:.priority
+</span></span><span style=display:flex><span>NAME                          PRIORITY
+</span></span><span style=display:flex><span>anyuid                        <span style=color:#ae81ff>10</span>
+</span></span><span style=display:flex><span>hostaccess                    &lt;nil&gt;
+</span></span><span style=display:flex><span>hostmount-anyuid              &lt;nil&gt;
+</span></span><span style=display:flex><span>hostnetwork                   &lt;nil&gt;
+</span></span><span style=display:flex><span>mycustomscc                   <span style=color:#ae81ff>99</span>
+</span></span><span style=display:flex><span>node-exporter                 &lt;nil&gt;
+</span></span><span style=display:flex><span>nonroot                       &lt;nil&gt;
+</span></span><span style=display:flex><span>privileged                    &lt;nil&gt;
+</span></span><span style=display:flex><span>restricted                    &lt;nil&gt;
+</span></span></code></pre></div><p>Let&rsquo;s see:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc delete po oauth-openshift-5c4466d8f6-hrrkf
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po
+</span></span><span style=display:flex><span>NAME                               READY   STATUS             RESTARTS   AGE
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-djg89   1/1     Running            <span style=color:#ae81ff>0</span>          3d4h
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-wq7cv   0/1     CrashLoopBackOff   <span style=color:#ae81ff>6</span>          7m45s
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po -n openshift-authentication -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{range .items[*]}{.metadata.annotations.openshift\.io/scc}{&#34;\t&#34;}{.metadata.name}{&#34;\t&#34;}{.metadata.namespace}{&#34;\n&#34;}{end}&#39;</span>
+</span></span><span style=display:flex><span>anyuid	oauth-openshift-5c4466d8f6-djg89	openshift-authentication
+</span></span><span style=display:flex><span>mycustomscc	oauth-openshift-5c4466d8f6-wq7cv	openshift-authentication
+</span></span></code></pre></div><p>Ooops, we just broke our cluster&mldr; the admission controller choose the
+<code>mycustomscc</code> SCC instead the <code>anyuid</code> one and now the pod is not able to run.
+Let&rsquo;s fix it by lowering the priority of our custom SCC:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>oc patch scc mycustomscc --type merge -p <span style=color:#e6db74>&#39;{&#34;priority&#34;:9}&#39;</span>
+</span></span><span style=display:flex><span>oc delete po oauth-openshift-5c4466d8f6-wq7cv
+</span></span><span style=display:flex><span>oc get po
+</span></span><span style=display:flex><span>NAME                               READY   STATUS    RESTARTS   AGE
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-djg89   1/1     Running   <span style=color:#ae81ff>0</span>          3d4h
+</span></span><span style=display:flex><span>oauth-openshift-5c4466d8f6-tbphl   1/1     Running   <span style=color:#ae81ff>0</span>          46s
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>oc get po -n openshift-authentication -o jsonpath<span style=color:#f92672>=</span><span style=color:#e6db74>&#39;{range .items[*]}{.metadata.annotations.openshift\.io/scc}{&#34;\t&#34;}{.metadata.name}{&#34;\t&#34;}{.metadata.namespace}{&#34;\n&#34;}{end}&#39;</span>
+</span></span><span style=display:flex><span>anyuid	oauth-openshift-5c4466d8f6-djg89	openshift-authentication
+</span></span><span style=display:flex><span>anyuid	oauth-openshift-5c4466d8f6-tbphl	openshift-authentication
+</span></span></code></pre></div><p>PHEW!</p></div><div class=tags><a href=https://www.underkube.com/tags/openshift>openshift</a>
+<a href=https://www.underkube.com/tags/permissions>permissions</a>
+<a href=https://www.underkube.com/tags/rbac>rbac</a>
+<a href=https://www.underkube.com/tags/scc>scc</a></div><div id=comment><script src=https://giscus.app/client.js data-repo=underkube/blog data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI1NTk4MzA=" data-category=Q&A data-category-id=DIC_kwDOC3o61s4CAdCk data-mapping=title data-reactions-enabled=1 data-emit-metadata=0 data-theme=light data-lang=en crossorigin=anonymous async></script></div></section></main><footer id=footer><div id=social><a class=symbol href=https://github.com/e-minguez/underkube target=_blank><svg fill="#bbb" width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Github</title><desc>Created with Sketch.</desc><defs/><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)"><g id="Github" transform="translate(264.000000, 939.000000)"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" id="Rounded" fill="#bbb"/><path d="M35.9985 13C22.746 13 12 23.7870921 12 37.096644c0 10.6440272 6.876 19.6751861 16.4145 22.8617681C29.6145 60.1797862 30.0525 59.4358488 30.0525 58.7973276 30.0525 58.2250681 30.0315 56.7100863 30.0195 54.6996482c-6.6765 1.4562499-8.085-3.2302544-8.085-3.2302544-1.0905-2.7829884-2.664-3.5239139-2.664-3.5239139C17.091 46.4500754 19.4355 46.4801943 19.4355 46.4801943c2.4075.1701719 3.675 2.4833051 3.675 2.4833051 2.142 3.6820383 5.6175 2.6188404 6.9855 2.0014024C30.3135 49.4077535 30.9345 48.3460615 31.62 47.7436831 26.2905 47.1352808 20.688 45.0691228 20.688 35.8361671c0-2.6308879.9345-4.781379 2.4705-6.4665327C22.911 28.7597262 22.0875 26.3110578 23.3925 22.9934585c0 0 2.016-.6475568 6.6 2.4697516C31.908 24.9285993 33.96 24.6620468 36.0015 24.6515052 38.04 24.6620468 40.0935 24.9285993 42.0105 25.4632101c4.581-3.1173084 6.5925-2.4697516 6.5925-2.4697516C49.9125 26.3110578 49.089 28.7597262 48.8415 29.3696344 50.3805 31.0547881 51.309 33.2052792 51.309 35.8361671c0 9.2555448-5.6115 11.29309-10.9575 11.8894446.860999999999997.7439374 1.629 2.2137408 1.629 4.4621184C41.9805 55.4089489 41.9505 58.0067059 41.9505 58.7973276 41.9505 59.4418726 42.3825 60.1918338 43.6005 59.9554002 53.13 56.7627944 60 47.7376593 60 37.096644 60 23.7870921 49.254 13 35.9985 13" fill="#fff"/></g></g></g></svg>
+</a><a class=symbol href=https://www.twitter.com/minwi target=_blank><svg fill="#bbb" width="28" height="28" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438.536" height="438.536" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536"><g><path d="M414.41 24.123C398.333 8.042 378.963.0 356.315.0H82.228C59.58.0 40.21 8.042 24.126 24.123 8.045 40.207.003 59.576.003 82.225v274.084c0 22.647 8.042 42.018 24.123 58.102 16.084 16.084 35.454 24.126 58.102 24.126h274.084c22.648.0 42.018-8.042 58.095-24.126 16.084-16.084 24.126-35.454 24.126-58.102V82.225C438.532 59.576 430.49 40.204 414.41 24.123zM335.471 168.735c.191 1.713.288 4.278.288 7.71.0 15.989-2.334 32.025-6.995 48.104-4.661 16.087-11.8 31.504-21.416 46.254-9.606 14.749-21.074 27.791-34.396 39.115-13.325 11.32-29.311 20.365-47.968 27.117-18.648 6.762-38.637 10.143-59.953 10.143-33.116.0-63.76-8.952-91.931-26.836 4.568.568 9.329.855 14.275.855 27.6.0 52.439-8.565 74.519-25.7-12.941-.185-24.506-4.179-34.688-11.991-10.185-7.803-17.273-17.699-21.271-29.691 4.947.76 8.658 1.137 11.132 1.137 4.187.0 9.042-.76 14.56-2.279-13.894-2.669-25.598-9.562-35.115-20.697-9.519-11.136-14.277-23.84-14.277-38.114v-.571c10.085 4.755 19.602 7.229 28.549 7.422-17.321-11.613-25.981-28.265-25.981-49.963.0-10.66 2.758-20.747 8.278-30.264 15.035 18.464 33.311 33.213 54.816 44.252 21.507 11.038 44.54 17.227 69.092 18.558-.95-3.616-1.427-8.186-1.427-13.704.0-16.562 5.853-30.692 17.56-42.399 11.703-11.706 25.837-17.561 42.394-17.561 17.515.0 32.079 6.283 43.688 18.846 13.134-2.474 25.892-7.33 38.26-14.56-4.757 14.652-13.613 25.788-26.55 33.402 12.368-1.716 23.88-4.95 34.537-9.708C357.458 149.793 347.462 160.166 335.471 168.735z"/></g></svg>
+</a><script data-name=BMC-Widget data-cfasync=false src=https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js data-id=minwi data-description="Support me on Buy me a coffee!" data-message=Gracias! data-color=#FFDD00 data-position=Right data-x_margin=18 data-y_margin=18></script><p><a href=https://librecounter.org/referer/show target=_blank><img src=https://librecounter.org/oldStyle.svg referrerpolicy=unsafe-url></a></p></div><div class=copyright>© Copyright
+2026
+<span class=split><svg fill="#bbb" width="15" height="15" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94-.1903.1718-.4797.1718-.67.0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45 10-1.5 16.48 1.8 13.91 6.75z"/></svg>
+</span>Eduardo Mínguez</div><div class=powerby>Powered by <a href=http://www.gohugo.io/>Hugo</a> Theme By <a href=https://github.com/nodejh/hugo-theme-cactus-plus>nodejh</a></div></footer></body></html>

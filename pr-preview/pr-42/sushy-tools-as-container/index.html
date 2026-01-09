@@ -1,0 +1,97 @@
+<!doctype html><html lang=en-us><head><title>Using sushy-tools in a container to simulate RedFish BMC | Underkube</title>
+<meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="Using sushy-tools in a container to simulate RedFish BMC"><meta name=generator content="Hugo 0.128.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon><meta name=keywords content="container,sushy-tools"><link rel=canonical href=https://www.underkube.com/sushy-tools-as-container/><script>!function(e,t){var n,s,o,i;t.__SV||(window.posthog=t,t._i=[],t.init=function(a,r,c){function d(e,t){var n=t.split(".");2==n.length&&(e=e[n[0]],t=n[1]),e[t]=function(){e.push([t].concat(Array.prototype.slice.call(arguments,0)))}}(n=e.createElement("script")).type="text/javascript",n.crossOrigin="anonymous",n.async=!0,n.src=r.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(i=e.getElementsByTagName("script")[0]).parentNode.insertBefore(n,i);var l=t;for(void 0!==c?l=t[c]=[]:c="posthog",l.people=l.people||[],l.toString=function(e){var t="posthog";return"posthog"!==c&&(t+="."+c),e||(t+=" (stub)"),t},l.people.toString=function(){return l.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),s=0;s<o.length;s++)d(l,o[s]);t._i.push([a,r,c])},t.__SV=1)}(document,window.posthog||[]),posthog.init("phc_uEqii0McatXuj5LJOegCHPbPJOk3px5r9cF2qGV0AiG",{api_host:"https://eu.i.posthog.com",person_profiles:"identified_only"})</script></head><body><nav class=navigation><a href=/><span class=arrow>←</span>Home</a>
+<a href=/posts>All Posts</a>
+<a href=/tags>Tags</a>
+<a href=/about>About</a>
+<a href=https://github.com/e-minguez/underkube>GitHub</a>
+<a class=button href>Subscribe</a></nav><main class=main><section id=single><h1 class=title>Using sushy-tools in a container to simulate RedFish BMC</h1><div class=tip><time datetime="2022-02-21 08:30:00 +0000 UTC">Feb 21, 2022</time>
+<span class=split>·
+</span><span>428 words
+</span><span class=split>·
+</span><span>3 minute read</span></div><div class=content><p>I wanted to simulate a RedFish BMC to be able to power on/off
+libvirt virtualmachines and attach ISOs as I do for baremetal hosts.</p><h2 id=entering-sushy-tools>Entering sushy-tools <a href=#entering-sushy-tools class=anchor>🔗</a></h2><p><a href=https://docs.openstack.org/sushy-tools/latest/user/dynamic-emulator.html target=_blank rel=noopener>sushy-tools</a>
+include a RedFish BMC emulator as <code>sushy-emulator</code>
+(see the code in the <a href=https://opendev.org/openstack/sushy-tools target=_blank rel=noopener>official repo</a>).</p><p>Basically it can connect to the libvirt socket to perform the required
+actions exposing a RedFish API.</p><h2 id=metal3-iosushy-tools-container-image>metal3-io/sushy-tools container image <a href=#metal3-iosushy-tools-container-image class=anchor>🔗</a></h2><p>To easily consume it, the <a href=https://metal3.io/ target=_blank rel=noopener>metal3</a> folks already have
+<a href=https://github.com/metal3-io/ironic-image/blob/main/resources/sushy-tools/Dockerfile target=_blank rel=noopener>a container image</a>
+ready for consumption at <a href=quay.io/metal3-io/sushy-tools:latest>quay.io/metal3-io/sushy-tools:latest</a></p><h2 id=sushy-emulator-flags-and-configuration>sushy-emulator flags and configuration <a href=#sushy-emulator-flags-and-configuration class=anchor>🔗</a></h2><p>There are a bunch of flags already available in the <code>sushy-emualtor</code> app. Some of them
+can also be specified as environment variables for example:</p><pre tabindex=0><code>--config CONFIG       Config file path. Can also be set via environment variable SUSHY_EMULATOR_CONFIG
+</code></pre><p>We will leverage this one later but in the meantime, we can create a custom
+configuration file for the ones we want as:</p><pre tabindex=0><code>mkdir -p ~/sushy-tools/
+cat &lt;&lt; EOF &gt; ~/sushy-tools/sushy-emulator.conf
+SUSHY_EMULATOR_LISTEN_IP = u&#39;0.0.0.0&#39;
+SUSHY_EMULATOR_LISTEN_PORT = 8000
+SUSHY_EMULATOR_SSL_CERT = None
+SUSHY_EMULATOR_SSL_KEY = None
+SUSHY_EMULATOR_OS_CLOUD = None
+SUSHY_EMULATOR_LIBVIRT_URI = u&#39;qemu:///system&#39;
+SUSHY_EMULATOR_IGNORE_BOOT_DEVICE = True
+SUSHY_EMULATOR_BOOT_LOADER_MAP = {
+    u&#39;UEFI&#39;: {
+        u&#39;x86_64&#39;: u&#39;/usr/share/OVMF/OVMF_CODE.secboot.fd&#39;
+    },
+    u&#39;Legacy&#39;: {
+        u&#39;x86_64&#39;: None
+    }
+}
+EOF
+</code></pre><h2 id=running-the-container>Running the container <a href=#running-the-container class=anchor>🔗</a></h2><p>A few things to consider:</p><ul><li>It requires certain privileges to talk with the libvirt socket, so it will be executed with sudo + the privileged flag</li><li>We need to specify the configuration file we created at <code>podman run</code> level using environment variables</li><li>We will overwrite the <code>CMD</code> in the container because otherwise the configuration is hardcoded to be placed at <a href=https://github.com/metal3-io/ironic-image/blob/main/resources/sushy-tools/Dockerfile#L7 target=_blank rel=noopener><code>/root/sushy/conf.py</code></a></li></ul><p>With that said:</p><pre tabindex=0><code>sudo podman run -d --privileged --rm --name sushy-tools \
+  -v ${HOME}/sushy-tools/sushy-emulator.conf:/etc/sushy/sushy-emulator.conf:Z \
+  -v /var/run/libvirt:/var/run/libvirt:Z \
+  -e SUSHY_EMULATOR_CONFIG=/etc/sushy/sushy-emulator.conf \
+  -p 8000:8000 \
+  quay.io/metal3-io/sushy-tools:latest sushy-emulator
+</code></pre><h2 id=check-it>Check it <a href=#check-it class=anchor>🔗</a></h2><p>Running a simple curl to a RedFish endpoint such as <code>redfish/v1/Systems</code> would be enough:</p><pre tabindex=0><code>$ curl -v localhost:8000/redfish/v1/Systems
+*   Trying 127.0.0.1:8000...
+* Connected to localhost (127.0.0.1) port 8000 (#0)
+&gt; GET /redfish/v1/Systems HTTP/1.1
+&gt; Host: localhost:8000
+&gt; User-Agent: curl/7.79.1
+&gt; Accept: */*
+&gt; 
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+&lt; HTTP/1.0 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 1129
+&lt; Server: Werkzeug/2.0.2 Python/3.9.9
+&lt; Date: Tue, 22 Feb 2022 16:05:08 GMT
+&lt; 
+{
+    &#34;@odata.type&#34;: &#34;#ComputerSystemCollection.ComputerSystemCollection&#34;,
+    &#34;Name&#34;: &#34;Computer System Collection&#34;,
+    &#34;Members@odata.count&#34;: 5,
+    &#34;Members&#34;: [
+        
+            {
+                &#34;@odata.id&#34;: &#34;/redfish/v1/Systems/b5091ded-5dcd-4218-bf69-0e2263bb0a7c&#34;
+            },
+        
+            {
+                &#34;@odata.id&#34;: &#34;/redfish/v1/Systems/3a5d0cd3-69da-455c-b0ce-9bbc8fa1467b&#34;
+            },
+        
+            {
+                &#34;@odata.id&#34;: &#34;/redfish/v1/Systems/dd47aacc-4fcc-4cbd-8ab2-97198007b08e&#34;
+            },
+        
+            {
+                &#34;@odata.id&#34;: &#34;/redfish/v1/Systems/429ac473-b840-4f35-aa2c-bc33e9065a2c&#34;
+            },
+        
+            {
+                &#34;@odata.id&#34;: &#34;/redfish/v1/Systems/7d3e4cb0-042c-44c4-b9c0-a60223c25394&#34;
+            }
+        
+    ],
+    &#34;@odata.context&#34;: &#34;/redfish/v1/$metadata#ComputerSystemCollection.ComputerSystemCollection&#34;,
+    &#34;@odata.id&#34;: &#34;/redfish/v1/Systems&#34;,
+    &#34;@Redfish.Copyright&#34;: &#34;Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright.&#34;
+* Closing connection 0
+</code></pre><h2 id=references>References <a href=#references class=anchor>🔗</a></h2><ul><li><a href=http://schmaustech.blogspot.com/2020/02/carve-up-redfish-with-sushy-tools.html target=_blank rel=noopener>Carve up RedFish with Sushy-Tools</a></li><li><a href=https://cloudcult.dev/sushy-emulator-redfish-for-the-virtualization-nation/ target=_blank rel=noopener>Sushy-Emulator: Redfish for the Virtualization Nation</a></li></ul></div><div class=tags><a href=https://www.underkube.com/tags/container>container</a>
+<a href=https://www.underkube.com/tags/sushy-tools>sushy-tools</a></div><div id=comment><script src=https://giscus.app/client.js data-repo=underkube/blog data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI1NTk4MzA=" data-category=Q&A data-category-id=DIC_kwDOC3o61s4CAdCk data-mapping=title data-reactions-enabled=1 data-emit-metadata=0 data-theme=light data-lang=en crossorigin=anonymous async></script></div></section></main><footer id=footer><div id=social><a class=symbol href=https://github.com/e-minguez/underkube target=_blank><svg fill="#bbb" width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Github</title><desc>Created with Sketch.</desc><defs/><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)"><g id="Github" transform="translate(264.000000, 939.000000)"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" id="Rounded" fill="#bbb"/><path d="M35.9985 13C22.746 13 12 23.7870921 12 37.096644c0 10.6440272 6.876 19.6751861 16.4145 22.8617681C29.6145 60.1797862 30.0525 59.4358488 30.0525 58.7973276 30.0525 58.2250681 30.0315 56.7100863 30.0195 54.6996482c-6.6765 1.4562499-8.085-3.2302544-8.085-3.2302544-1.0905-2.7829884-2.664-3.5239139-2.664-3.5239139C17.091 46.4500754 19.4355 46.4801943 19.4355 46.4801943c2.4075.1701719 3.675 2.4833051 3.675 2.4833051 2.142 3.6820383 5.6175 2.6188404 6.9855 2.0014024C30.3135 49.4077535 30.9345 48.3460615 31.62 47.7436831 26.2905 47.1352808 20.688 45.0691228 20.688 35.8361671c0-2.6308879.9345-4.781379 2.4705-6.4665327C22.911 28.7597262 22.0875 26.3110578 23.3925 22.9934585c0 0 2.016-.6475568 6.6 2.4697516C31.908 24.9285993 33.96 24.6620468 36.0015 24.6515052 38.04 24.6620468 40.0935 24.9285993 42.0105 25.4632101c4.581-3.1173084 6.5925-2.4697516 6.5925-2.4697516C49.9125 26.3110578 49.089 28.7597262 48.8415 29.3696344 50.3805 31.0547881 51.309 33.2052792 51.309 35.8361671c0 9.2555448-5.6115 11.29309-10.9575 11.8894446.860999999999997.7439374 1.629 2.2137408 1.629 4.4621184C41.9805 55.4089489 41.9505 58.0067059 41.9505 58.7973276 41.9505 59.4418726 42.3825 60.1918338 43.6005 59.9554002 53.13 56.7627944 60 47.7376593 60 37.096644 60 23.7870921 49.254 13 35.9985 13" fill="#fff"/></g></g></g></svg>
+</a><a class=symbol href=https://www.twitter.com/minwi target=_blank><svg fill="#bbb" width="28" height="28" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438.536" height="438.536" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536"><g><path d="M414.41 24.123C398.333 8.042 378.963.0 356.315.0H82.228C59.58.0 40.21 8.042 24.126 24.123 8.045 40.207.003 59.576.003 82.225v274.084c0 22.647 8.042 42.018 24.123 58.102 16.084 16.084 35.454 24.126 58.102 24.126h274.084c22.648.0 42.018-8.042 58.095-24.126 16.084-16.084 24.126-35.454 24.126-58.102V82.225C438.532 59.576 430.49 40.204 414.41 24.123zM335.471 168.735c.191 1.713.288 4.278.288 7.71.0 15.989-2.334 32.025-6.995 48.104-4.661 16.087-11.8 31.504-21.416 46.254-9.606 14.749-21.074 27.791-34.396 39.115-13.325 11.32-29.311 20.365-47.968 27.117-18.648 6.762-38.637 10.143-59.953 10.143-33.116.0-63.76-8.952-91.931-26.836 4.568.568 9.329.855 14.275.855 27.6.0 52.439-8.565 74.519-25.7-12.941-.185-24.506-4.179-34.688-11.991-10.185-7.803-17.273-17.699-21.271-29.691 4.947.76 8.658 1.137 11.132 1.137 4.187.0 9.042-.76 14.56-2.279-13.894-2.669-25.598-9.562-35.115-20.697-9.519-11.136-14.277-23.84-14.277-38.114v-.571c10.085 4.755 19.602 7.229 28.549 7.422-17.321-11.613-25.981-28.265-25.981-49.963.0-10.66 2.758-20.747 8.278-30.264 15.035 18.464 33.311 33.213 54.816 44.252 21.507 11.038 44.54 17.227 69.092 18.558-.95-3.616-1.427-8.186-1.427-13.704.0-16.562 5.853-30.692 17.56-42.399 11.703-11.706 25.837-17.561 42.394-17.561 17.515.0 32.079 6.283 43.688 18.846 13.134-2.474 25.892-7.33 38.26-14.56-4.757 14.652-13.613 25.788-26.55 33.402 12.368-1.716 23.88-4.95 34.537-9.708C357.458 149.793 347.462 160.166 335.471 168.735z"/></g></svg>
+</a><script data-name=BMC-Widget data-cfasync=false src=https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js data-id=minwi data-description="Support me on Buy me a coffee!" data-message=Gracias! data-color=#FFDD00 data-position=Right data-x_margin=18 data-y_margin=18></script><p><a href=https://librecounter.org/referer/show target=_blank><img src=https://librecounter.org/oldStyle.svg referrerpolicy=unsafe-url></a></p></div><div class=copyright>© Copyright
+2026
+<span class=split><svg fill="#bbb" width="15" height="15" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94-.1903.1718-.4797.1718-.67.0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45 10-1.5 16.48 1.8 13.91 6.75z"/></svg>
+</span>Eduardo Mínguez</div><div class=powerby>Powered by <a href=http://www.gohugo.io/>Hugo</a> Theme By <a href=https://github.com/nodejh/hugo-theme-cactus-plus>nodejh</a></div></footer></body></html>
