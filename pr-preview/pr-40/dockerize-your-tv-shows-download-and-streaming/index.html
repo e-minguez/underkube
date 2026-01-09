@@ -1,0 +1,101 @@
+<!doctype html><html lang=en-us><head><title>Dockerize your tv shows download and streaming to your TV | Underkube</title>
+<meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="Tips, tricks and all things k8s/OpenShift/containers/etc"><meta name=generator content="Hugo 0.128.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon><meta name=keywords content="docker,fedora,flexget,plex,transmission"><link rel=canonical href=https://www.underkube.com/dockerize-your-tv-shows-download-and-streaming/><script>!function(e,t){var n,s,o,i;t.__SV||(window.posthog=t,t._i=[],t.init=function(a,r,c){function d(e,t){var n=t.split(".");2==n.length&&(e=e[n[0]],t=n[1]),e[t]=function(){e.push([t].concat(Array.prototype.slice.call(arguments,0)))}}(n=e.createElement("script")).type="text/javascript",n.crossOrigin="anonymous",n.async=!0,n.src=r.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(i=e.getElementsByTagName("script")[0]).parentNode.insertBefore(n,i);var l=t;for(void 0!==c?l=t[c]=[]:c="posthog",l.people=l.people||[],l.toString=function(e){var t="posthog";return"posthog"!==c&&(t+="."+c),e||(t+=" (stub)"),t},l.people.toString=function(){return l.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),s=0;s<o.length;s++)d(l,o[s]);t._i.push([a,r,c])},t.__SV=1)}(document,window.posthog||[]),posthog.init("phc_uEqii0McatXuj5LJOegCHPbPJOk3px5r9cF2qGV0AiG",{api_host:"https://eu.i.posthog.com",person_profiles:"identified_only"})</script></head><body><nav class=navigation><a href=/><span class=arrow>←</span>Home</a>
+<a href=/posts>All Posts</a>
+<a href=/tags>Tags</a>
+<a href=/about>About</a>
+<a class=button href>Subscribe</a></nav><main class=main><section id=single><h1 class=title>Dockerize your tv shows download and streaming to your TV</h1><div class=tip><time datetime="2015-08-21 09:54:23 +0000 UTC">Aug 21, 2015</time>
+<span class=split>·
+</span><span>983 words
+</span><span class=split>·
+</span><span>5 minute read</span></div><div class=content><p>I&rsquo;m going to explain my setup of how do I watch my favourites tv shows using
+containers.</p><h1 id=requisites>Requisites <a href=#requisites class=anchor>🔗</a></h1><ul><li>TV</li><li>WiFi</li><li><a href=https://www.google.es/chrome/devices/chromecast/ target=_blank rel=noopener>ChromeCast</a></li><li><a href="https://play.google.com/store/apps/details?id=com.plexapp.android&amp;hl=es" target=_blank rel=noopener>Plex for Android</a></li><li><a href=http://showrss.info/ target=_blank rel=noopener>ShowRSS</a> <a href="http://showrss.info/?cs=feeds" target=_blank rel=noopener>feed</a>. You need to create an account and setup it with your favourites tv shows, so you&rsquo;ll end up with some rss feed like <code>http://showrss.info/rss.php?user_id=XXXXX&amp;hd=1&amp;proper=1</code></li><li>CentOS 7 (or any distro docker capable) with docker daemon installed and running</li><li>Non root user to run all the commands (this is a personal preference, feel free to do it with root user if you want&mldr;)</li><li>Shared folders to store your multimedia, flexget config & plex config. Something like:</li></ul><pre tabindex=0><code>/storage/media/
+├── plex
+├── flexget
+├── music
+├── pictures
+├── transmission
+│   ├── downloads
+│   ├── incomplete
+│   └── watch
+└── videos
+    ├── movies
+    └── tvshows
+</code></pre><p><em>I store the media folder in a btrfs subvolume, but that&rsquo;s another topic :)</em></p><h1 id=setup>Setup <a href=#setup class=anchor>🔗</a></h1><h2 id=tv>TV <a href=#tv class=anchor>🔗</a></h2><ul><li>ChromeCast is properly setup to your TV and wireless network</li><li>Android mobile with Plex for Android installed in the same wireless network</li></ul><h2 id=nat>NAT <a href=#nat class=anchor>🔗</a></h2><p>You need to open 12345/udp port in your router to your docker host
+(transmission container connectivity with the outside world)</p><h2 id=docker-host>Docker host <a href=#docker-host class=anchor>🔗</a></h2><ul><li><a href=https://hub.docker.com/r/eminguez/transmission-fedora/ target=_blank rel=noopener>eminguez/transmission-fedora</a> It will only download files (running 24x7)</li><li><a href=https://hub.docker.com/r/eminguez/plex-media-server-fedora/ target=_blank rel=noopener>eminguez/plex-media-server-fedora</a> It will stream the tv show to my TV (running 24x7)</li><li><a href=https://hub.docker.com/r/eminguez/flexget-fedora/ target=_blank rel=noopener>eminguez/flexget-fedora</a>
+It will handle the tv shows downloads, move them when finished and clean them up in transmission when ratio or timeout is reached (running every hour)</li></ul><p><em>Why Fedora? Because I like it and I work at Red Hat :D</em></p><h1 id=how-does-it-work>How does it work <a href=#how-does-it-work class=anchor>🔗</a></h1><p>Transmission container is listening in 9091 for API calls and webgui. Every hour (using cron), the flexget container is executed, and attached to the same network namespace than the transmission container (so it can send API calls to <code>localhost</code>).</p><p>Flexget will:</p><ul><li>query the RSS feed and enqueue the proper magnet links to the transmission daemon to download the tv shows that you&rsquo;ve configured</li><li>if finished, it will move the tv shows to the proper folders in your media folder</li><li>if finished, and ratio or timeout reached, it will clean the transmission queue</li></ul><p>Then, when you want, fire the Plex app in your Android phone, browse your favourite tv show, and play it in your big screen TV :)</p><h1 id=installation>Installation <a href=#installation class=anchor>🔗</a></h1><p>Easy peasy!</p><ul><li>Pull the docker images:</li></ul><pre tabindex=0><code>docker pull eminguez/transmission-fedora
+docker pull eminguez/flexget-fedora
+docker pull eminguez/plex-media-server-fedora
+</code></pre><ul><li>Create a simple script to run the flexget container (in my case /home/edu/bin/flexget.sh`) and give it the proper execution permissions</li></ul><pre tabindex=0><code>#!/bin/sh
+docker run --rm --net=container:transmission -v /storage/media/flexget/:/home/flexget/.config/flexget/ -v /storage/media/transmission/downloads/:/home/flexget/flexget/from -v /storage/media/videos/tvshows/:/home/flexget/flexget/to eminguez/flexget-fedora &gt; /dev/null
+</code></pre><ul><li>Setup an hourly cron task to trigger the flexget container:</li></ul><pre tabindex=0><code>0 * * * * /home/edu/bin/flexget.sh &gt;/dev/null 2&gt;&amp;1
+</code></pre><ul><li>Configure flexget to get your tv shows. I use the <a href=https://github.com/e-minguez/flexget-fedora/blob/master/config.yml.sample target=_blank rel=noopener>following template</a>, replace the VARIABLES with your settings, and store it in <code>/storage/media/flexget/config.yml</code>:</li></ul><pre tabindex=0><code>templates:
+  global:
+    clean_transmission:
+      host: localhost
+      port: 9091
+      username: transmission
+      password: PASSWORD
+      finished_for: 2 hours
+      min_ratio: 1
+    disable: [details]
+    # configuration of email parameters
+    # each feed will send an email with the accepted entries
+    # can be disabled per feed with email: active: False
+    email:
+      active: True
+      from: FROM
+      to: TO
+      smtp_host: smtp.gmail.com
+      smtp_port: 587
+      smtp_login: true
+      smtp_username: USERNAME
+      smtp_password: PASSWORD
+      smtp_tls: true
+tasks:
+  # downloading task
+  download-rss:
+    rss: http://showrss.info/rss.php?user_id=SHOWRSS_ID&amp;hd=1&amp;proper=1&amp;namespaces=true&amp;magnets=true
+    # fetch all the feed series
+    all_series: yes
+    limit_new: 10  
+    # use transmission to download the torrents
+    transmission:
+      host: localhost
+      port: 9091
+      username: transmission
+      password: PASSWORD
+    only_new: yes
+  # sorting task
+  sort-files:
+    find:
+      # directory with the files to be sorted
+      path: /home/flexget/flexget/from/
+      # fetch all avi, mkv and mp4 files, skips the .part files (unfinished torrents)
+      regexp: &#39;.*\.(avi|mkv|mp4)$&#39;
+      recursive: yes
+    accept_all: yes
+    seen: local
+    regexp:
+      reject:
+        - sample
+    # this is needed for the episode names
+    thetvdb_lookup: yes
+    all_series:
+      parse_only: yes
+    move:
+      # this is where the series will be put
+      to: /home/flexget/flexget/to/{{ tvdb_series_name }}
+      # save the file as &#34;Series Name - SxxEyy - Episode Name.ext&#34;
+      filename: &#39;{{ tvdb_series_name }} - {{ series_id }} - {{ tvdb_ep_name }}{{ location | pathext }}&#39;
+</code></pre><ul><li>Run the transmission container with the previously used password as environmental variable:</li></ul><pre tabindex=0><code>docker run -d --name transmission --restart=always -p 12345:12345 -p 12345:12345/udp -p 9091:9091 -e ADMIN_PASS=PASSWORD -v /storage/media/transmission/downloads:/var/lib/transmission/downloads -v /storage/media/transmission/incomplete:/var/lib/transmission/incomplete -v /storage/media/transmission/watch:/var/lib/transmission/watch eminguez/transmission-fedora
+</code></pre><p><em>Note the restart=always flag to keep it running 24x7 and survive host reboots!</em></p><ul><li>Run the plex container:</li></ul><pre tabindex=0><code>docker run --name plex-media-server -d --restart=always -v /storage/media/plex/:/config -v /storage/media/:/media -p 32400:32400 eminguez/plex-fedora
+</code></pre><p><em>Note the restart=always flag to keep it running 24x7 and survive host reboots!</em></p><ul><li>Browse to <code>http://your_host:32400/web</code> and configure plex for your environment.</li></ul><p><em>If this doesn&rsquo;t work, kill the plex container, edit <code>/storage/media/plex/Plex Media Server/Preferences.xml</code> and add the <code>allowedNetworks="192.168.1.0/255.255.255.0"</code> attribute to the &lt;Preferences &mldr;> node to allow networking connections, and start the plex container again</em></p><h1 id=tips>Tips <a href=#tips class=anchor>🔗</a></h1><ul><li>If you want Avahi broadcast to work, add <code>--net=host</code> to the plex container run command, but this will be more insecure. I&rsquo;ve setup manually my server in the Plex Android app to point directly to the host in <em>Settings > Advanced > Manual Connections</em></li><li>Set a friendly Plex server name under <em>Plex Settings > Server > General</em> in the Plex web Gui</li><li>You can download any torrent/magnet file browsing <code>http://your_host:9091</code> using &ldquo;transmission/PASSWORD&rdquo; and it will be downloaded to <code>/storage/media/transmission/downloads/</code> folder</li><li>As a bonus, you can drop any torrent file in <code>/storage/media/transmission/watch/</code> folder and transmission will gently download it for you :)</li></ul><h1 id=volume-mapping-explanation>Volume mapping explanation <a href=#volume-mapping-explanation class=anchor>🔗</a></h1><h2 id=flexget>Flexget <a href=#flexget class=anchor>🔗</a></h2><ul><li>`/storage/media/flexget/:/home/flexget/.config/flexget/ to store the flexget configuration, sqlite database and log file</li><li><code>/storage/media/transmission/downloads/:/home/flexget/flexget/from</code> where transmission will move the files once downloaded</li><li>`/storage/media/videos/tvshows/:/home/flexget/flexget/to where plex will look for tv shows</li></ul><h2 id=transmission>Transmission <a href=#transmission class=anchor>🔗</a></h2><ul><li><code>/storage/media/transmission/incomplete:/var/lib/transmission/incomplete</code> incomplete downloaded files</li><li><code>/storage/media/transmission/downloads:/var/lib/transmission/downloads</code> where transmission will move the files once downloaded</li><li><code>/storage/media/transmission/watch:/var/lib/transmission/watch</code> where transmission will look for torrent files</li></ul><h2 id=plex>Plex <a href=#plex class=anchor>🔗</a></h2><ul><li><code>/storage/media/plex/:/config</code> to store the plex configuration, database and so on</li><li><code>/storage/media/:/media</code> where plex will look for media files (tv shows, movies, music, pictures,&mldr;)</li></ul><h1 id=references-and-thanks>References and thanks <a href=#references-and-thanks class=anchor>🔗</a></h1><p>I&rsquo;ve used the following repos as base and just adapt it to Fedora:</p><ul><li><a href=https://github.com/wernight/docker-plex-media-server target=_blank rel=noopener>https://github.com/wernight/docker-plex-media-server</a></li><li><a href=https://github.com/elventear/docker-transmission target=_blank rel=noopener>https://github.com/elventear/docker-transmission</a></li></ul><p>So, thank you @wernight and @elventear :)</p></div><div class=tags><a href=https://www.underkube.com/tags/docker>docker</a>
+<a href=https://www.underkube.com/tags/fedora>fedora</a>
+<a href=https://www.underkube.com/tags/flexget>flexget</a>
+<a href=https://www.underkube.com/tags/plex>plex</a>
+<a href=https://www.underkube.com/tags/transmission>transmission</a></div><div id=comment><script src=https://giscus.app/client.js data-repo=underkube/blog data-repo-id="MDEwOlJlcG9zaXRvcnkxOTI1NTk4MzA=" data-category=Q&A data-category-id=DIC_kwDOC3o61s4CAdCk data-mapping=title data-reactions-enabled=1 data-emit-metadata=0 data-theme=light data-lang=en crossorigin=anonymous async></script></div></section></main><footer id=footer><div id=social><a class=symbol href=https://www.github.com/e-minguez target=_blank><svg fill="#bbb" width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Github</title><desc>Created with Sketch.</desc><defs/><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)"><g id="Github" transform="translate(264.000000, 939.000000)"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" id="Rounded" fill="#bbb"/><path d="M35.9985 13C22.746 13 12 23.7870921 12 37.096644c0 10.6440272 6.876 19.6751861 16.4145 22.8617681C29.6145 60.1797862 30.0525 59.4358488 30.0525 58.7973276 30.0525 58.2250681 30.0315 56.7100863 30.0195 54.6996482c-6.6765 1.4562499-8.085-3.2302544-8.085-3.2302544-1.0905-2.7829884-2.664-3.5239139-2.664-3.5239139C17.091 46.4500754 19.4355 46.4801943 19.4355 46.4801943c2.4075.1701719 3.675 2.4833051 3.675 2.4833051 2.142 3.6820383 5.6175 2.6188404 6.9855 2.0014024C30.3135 49.4077535 30.9345 48.3460615 31.62 47.7436831 26.2905 47.1352808 20.688 45.0691228 20.688 35.8361671c0-2.6308879.9345-4.781379 2.4705-6.4665327C22.911 28.7597262 22.0875 26.3110578 23.3925 22.9934585c0 0 2.016-.6475568 6.6 2.4697516C31.908 24.9285993 33.96 24.6620468 36.0015 24.6515052 38.04 24.6620468 40.0935 24.9285993 42.0105 25.4632101c4.581-3.1173084 6.5925-2.4697516 6.5925-2.4697516C49.9125 26.3110578 49.089 28.7597262 48.8415 29.3696344 50.3805 31.0547881 51.309 33.2052792 51.309 35.8361671c0 9.2555448-5.6115 11.29309-10.9575 11.8894446.860999999999997.7439374 1.629 2.2137408 1.629 4.4621184C41.9805 55.4089489 41.9505 58.0067059 41.9505 58.7973276 41.9505 59.4418726 42.3825 60.1918338 43.6005 59.9554002 53.13 56.7627944 60 47.7376593 60 37.096644 60 23.7870921 49.254 13 35.9985 13" fill="#fff"/></g></g></g></svg>
+</a><a class=symbol href=https://www.twitter.com/minwi target=_blank><svg fill="#bbb" width="28" height="28" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438.536" height="438.536" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536"><g><path d="M414.41 24.123C398.333 8.042 378.963.0 356.315.0H82.228C59.58.0 40.21 8.042 24.126 24.123 8.045 40.207.003 59.576.003 82.225v274.084c0 22.647 8.042 42.018 24.123 58.102 16.084 16.084 35.454 24.126 58.102 24.126h274.084c22.648.0 42.018-8.042 58.095-24.126 16.084-16.084 24.126-35.454 24.126-58.102V82.225C438.532 59.576 430.49 40.204 414.41 24.123zM335.471 168.735c.191 1.713.288 4.278.288 7.71.0 15.989-2.334 32.025-6.995 48.104-4.661 16.087-11.8 31.504-21.416 46.254-9.606 14.749-21.074 27.791-34.396 39.115-13.325 11.32-29.311 20.365-47.968 27.117-18.648 6.762-38.637 10.143-59.953 10.143-33.116.0-63.76-8.952-91.931-26.836 4.568.568 9.329.855 14.275.855 27.6.0 52.439-8.565 74.519-25.7-12.941-.185-24.506-4.179-34.688-11.991-10.185-7.803-17.273-17.699-21.271-29.691 4.947.76 8.658 1.137 11.132 1.137 4.187.0 9.042-.76 14.56-2.279-13.894-2.669-25.598-9.562-35.115-20.697-9.519-11.136-14.277-23.84-14.277-38.114v-.571c10.085 4.755 19.602 7.229 28.549 7.422-17.321-11.613-25.981-28.265-25.981-49.963.0-10.66 2.758-20.747 8.278-30.264 15.035 18.464 33.311 33.213 54.816 44.252 21.507 11.038 44.54 17.227 69.092 18.558-.95-3.616-1.427-8.186-1.427-13.704.0-16.562 5.853-30.692 17.56-42.399 11.703-11.706 25.837-17.561 42.394-17.561 17.515.0 32.079 6.283 43.688 18.846 13.134-2.474 25.892-7.33 38.26-14.56-4.757 14.652-13.613 25.788-26.55 33.402 12.368-1.716 23.88-4.95 34.537-9.708C357.458 149.793 347.462 160.166 335.471 168.735z"/></g></svg>
+</a><script data-name=BMC-Widget data-cfasync=false src=https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js data-id=minwi data-description="Support me on Buy me a coffee!" data-message=Gracias! data-color=#FFDD00 data-position=Right data-x_margin=18 data-y_margin=18></script><p><a href=https://librecounter.org/referer/show target=_blank><img src=https://librecounter.org/oldStyle.svg referrerpolicy=unsafe-url></a></p></div><div class=copyright>© Copyright
+2026
+<span class=split><svg fill="#bbb" width="15" height="15" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94-.1903.1718-.4797.1718-.67.0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45 10-1.5 16.48 1.8 13.91 6.75z"/></svg>
+</span>Eduardo Mínguez</div><div class=powerby>Powered by <a href=http://www.gohugo.io/>Hugo</a> Theme By <a href=https://github.com/nodejh/hugo-theme-cactus-plus>nodejh</a></div></footer></body></html>
