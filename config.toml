@@ -66,4 +66,4 @@ googleAnalytics = "UA-143530243-1"
   github = "https://www.github.com/e-minguez"
 
 [permalinks]
-"/" = ":slug/"
+posts = "/:slug/"
