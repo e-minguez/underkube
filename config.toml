@@ -63,7 +63,11 @@ googleAnalytics = "UA-143530243-1"
   # Add additional social link entries underneath
   [social]
   twitter = "https://www.twitter.com/minwi"
-  github = "https://www.github.com/e-minguez"
+  github = "https://github.com/e-minguez/underkube"
+
+[[params.Links]]
+  name = "GitHub"
+  path = "https://github.com/e-minguez/underkube"
 
 [permalinks]
 posts = "/:slug/"
