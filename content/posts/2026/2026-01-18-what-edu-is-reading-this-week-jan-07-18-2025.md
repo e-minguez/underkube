@@ -2,6 +2,9 @@
 title: "What Edu is reading this week (Jan 5 - 18, 2026)"
 date: 2026-01-18T09:00:00+01:00
 draft: false
+slug: what-edu-is-reading-this-week-jan-07-18-2025
+aliases:
+- /posts/2026-01-18-what-edu-is-reading-this-week-jan-07-18-2025/
 categories:
 - Reading
 tags:
