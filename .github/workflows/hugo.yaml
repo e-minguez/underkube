@@ -41,7 +41,11 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             REPO_NAME=${GITHUB_REPOSITORY#*/}
-            HUGO_BASE_URL="https://${{ github.repository_owner }}.github.io/$REPO_NAME/pr-preview/pr-${{ github.event.number }}/"
+            if [ "${{ github.repository }}" = "e-minguez/underkube" ]; then
+              HUGO_BASE_URL="https://www.underkube.com/pr-preview/pr-${{ github.event.number }}/"
+            else
+              HUGO_BASE_URL="https://${{ github.repository_owner }}.github.io/$REPO_NAME/pr-preview/pr-${{ github.event.number }}/"
+            fi
             hugo --minify --baseURL "$HUGO_BASE_URL"
           else
             hugo --minify
