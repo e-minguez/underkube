@@ -1,0 +1,9 @@
+.reading-list-button {
+    background-color: #9b59b6 !important; /* Purple */
+    color: #fff !important;
+    margin-left: 12px;
+}
+.reading-list-button:hover {
+    background-color: #8e44ad !important; /* Darker Purple */
+    color: #fff !important;
+}
