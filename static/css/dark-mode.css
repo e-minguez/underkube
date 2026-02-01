@@ -1,3 +1,13 @@
+/*
+  The theme does not set a background color on html or body,
+  meaning it defaults to transparent (showing the browser's default white).
+  However, filter: invert(1) on a transparent background results in a transparent background,
+  so the background remains white. We must explicitly set a white background so it can be inverted to black.
+*/
+html {
+  background-color: #fff;
+}
+
 html[theme='dark-mode'] {
   filter: invert(1) hue-rotate(180deg);
 }
