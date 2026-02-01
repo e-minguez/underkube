@@ -69,5 +69,10 @@ googleAnalytics = "UA-143530243-1"
   name = "GitHub"
   path = "https://github.com/e-minguez/underkube"
 
+[[params.Links]]
+  name = "Reading List"
+  path = "/reading-list/"
+
 [permalinks]
 posts = "/:slug/"
+reading-list = "/:slug/"
