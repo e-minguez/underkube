@@ -25,7 +25,7 @@ googleAnalytics = "UA-143530243-1"
   twitterCardImage = ""
 
   # Add custom assets with their paths relative to the static folder
-  customCSS = []
+  customCSS = ["css/dark-mode.css"]
   customJS  = []
 
   # The variables below are optionally too and can be used to
