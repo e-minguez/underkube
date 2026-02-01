@@ -7,3 +7,13 @@ html[theme='dark-mode'] video,
 html[theme='dark-mode'] iframe {
   filter: invert(1) hue-rotate(180deg);
 }
+
+/*
+   The profile avatar often has a white background (e.g. a logo).
+   If we un-invert it (like other images), it shows as a white box on the black page.
+   By setting filter: none, we allow it to stay inverted (White BG -> Black BG),
+   which blends better with the dark mode, even if colors are inverted.
+*/
+html[theme='dark-mode'] .profile .avatar {
+  filter: none;
+}
