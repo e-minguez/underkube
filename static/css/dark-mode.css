@@ -1,11 +1,19 @@
 /*
-  The theme does not set a background color on html or body,
-  meaning it defaults to transparent (showing the browser's default white).
-  However, filter: invert(1) on a transparent background results in a transparent background,
-  so the background remains white. We must explicitly set a white background so it can be inverted to black.
+  Ensure the root element has a white background and fills the viewport.
+  This is crucial because:
+  1. Default background is transparent (appearing white). Inverting transparent stays transparent (white).
+     So we must set explicit white to invert it to black.
+  2. Applying filter on html stops the background from propagating to the canvas.
+     So we must ensure html/body fills the viewport (min-height: 100vh) so the 'box' covers the screen.
 */
 html {
   background-color: #fff;
+  min-height: 100vh;
+}
+
+body {
+  background-color: #fff;
+  min-height: 100vh;
 }
 
 html[theme='dark-mode'] {
