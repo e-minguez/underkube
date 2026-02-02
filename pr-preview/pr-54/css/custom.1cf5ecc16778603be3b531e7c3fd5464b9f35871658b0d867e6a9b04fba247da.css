@@ -1,5 +1,12 @@
 :root {
     --accent: #ff6600; /* Orange highlight */
+
+    /* Override Archie Theme Variables */
+    --color-primary: #ff6600;
+    --color-primary-hover: #e65c00;
+
+    /* Dark Mode Overrides */
+    --color-primary-dark: #ff6600;
 }
 
 /* Re-apply button styles */
@@ -19,12 +26,12 @@
 }
 
 .reading-list-button {
-    background-color: var(--accent) !important; /* Orange */
+    background-color: var(--color-primary) !important; /* Use the theme var which we overrode */
     color: #fff !important;
     margin-left: 12px;
 }
 .reading-list-button:hover {
-    background-color: #e65c00 !important; /* Darker Orange */
+    background-color: var(--color-primary-hover) !important;
     color: #fff !important;
 }
 
@@ -41,10 +48,10 @@ nav a {
 
 /* Override selection color if not handled by --accent in all places */
 ::selection {
-    background: #ff6600;
+    background: var(--color-primary);
     color: #fff;
 }
 ::-moz-selection {
-    background: #ff6600;
+    background: var(--color-primary);
     color: #fff;
 }
