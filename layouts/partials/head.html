@@ -34,7 +34,13 @@
 
 <header>
 	<div class="main">
-		<a href="{{ absLangURL "/" }}">{{ .Site.Title }}</a>
+		<a href="{{ absLangURL "/" }}">
+            {{ if .Site.Params.logo }}
+            <img src="{{ .Site.Params.logo | relURL }}" alt="{{ .Site.Title }}">
+            {{ else }}
+            {{ .Site.Title }}
+            {{ end }}
+        </a>
 	</div>
 	<nav>
 		{{ range .Site.Menus.main }}

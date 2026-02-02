@@ -2,6 +2,7 @@
 <main class="list">
     <div class="site-description">
         <p>Reading List</p>
+        <p class="subtitle">A humble attempt to collect interesting links on weekly basis</p>
     </div>
     {{ $pages := where .Site.RegularPages "Section" "reading-list" }}
     {{ range $pages.GroupByDate "2006" }}

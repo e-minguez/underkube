@@ -7,13 +7,16 @@ googleAnalytics = "UA-143530243-1"
 [params]
   mode = "toggle"
   useCDN = false
-  subtitle = "Tips, tricks and all things k8s/OpenShift/containers/etc"
+  subtitle = "Tips, tricks and all things Kubernetes containers, cloud native, AI, etc"
   author = "Eduardo Mínguez"
-  description = "Tips, tricks and all things k8s/OpenShift/containers/etc"
+  description = "Tips, tricks and all things Kubernetes containers, cloud native, AI, etc"
+  logo = "/images/underkube-logo-100px.png"
 
   # Preserved from old config for overrides
   enableGoogleAnalytics = true
   enableRSS = true
+
+  customCSS = ["css/custom.css"]
 
 [[params.social]]
   name = "GitHub"
@@ -49,11 +52,15 @@ googleAnalytics = "UA-143530243-1"
   name = "Reading List"
   url = "/reading-list/"
   weight = 5
+  [menu.main.params]
+    class = "button reading-list-button"
 
 [[menu.main]]
   name = "Subscribe"
   url = "/index.xml"
   weight = 6
+  [menu.main.params]
+    class = "button"
 
 [permalinks]
   posts = "/:slug/"
