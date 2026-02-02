@@ -60,6 +60,14 @@ nav a {
     }
 }
 
+/* Remove border/background from logo */
+header .main img {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
 /* Override selection color if not handled by --accent in all places */
 ::selection {
     background: var(--color-primary);
