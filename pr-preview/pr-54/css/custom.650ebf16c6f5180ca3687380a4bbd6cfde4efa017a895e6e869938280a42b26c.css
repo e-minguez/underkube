@@ -46,6 +46,20 @@ nav a {
     }
 }
 
+/* Footer mobile alignment */
+@media (max-width: 600px) {
+    footer {
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+    }
+    .footer-info {
+        text-align: center;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
 /* Override selection color if not handled by --accent in all places */
 ::selection {
     background: var(--color-primary);
