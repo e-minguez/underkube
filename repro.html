@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Link to the actual CSS file we modified -->
+<link rel="stylesheet" href="static/css/dark-mode.css">
+<style>
+/* Simulation of style.css defaults */
+body { margin: 0; font-family: sans-serif; }
+.navigation { padding: 10px; }
+</style>
+</head>
+<body>
+<nav class="navigation">
+  <a href="#" id="theme-toggle" onclick="toggleTheme(); return false;">Theme</a>
+</nav>
+<div style="height: 150vh; padding: 20px;">
+    <h1>Test Dark Mode</h1>
+    <p>This content is tall to test scrolling.</p>
+    <div class="profile"><div class="avatar" style="background: white; width: 50px; height: 50px; border: 1px solid black;">Avatar</div></div>
+</div>
+
+<script>
+    // JS Logic from head.html
+    (function() {
+        var theme = localStorage.getItem('theme');
+        var html = document.documentElement;
+        if (theme === 'dark-mode') {
+            html.setAttribute('theme', 'dark-mode');
+        } else if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            html.setAttribute('theme', 'dark-mode');
+        }
+    })();
+
+    function toggleTheme() {
+        var html = document.documentElement;
+        var currentTheme = html.getAttribute('theme');
+        if (currentTheme === 'dark-mode') {
+            html.removeAttribute('theme');
+            localStorage.setItem('theme', 'light-mode');
+        } else {
+            html.setAttribute('theme', 'dark-mode');
+            localStorage.setItem('theme', 'dark-mode');
+        }
+        updateThemeToggleText();
+    }
+
+    function updateThemeToggleText() {
+        var theme = document.documentElement.getAttribute('theme');
+        var btn = document.getElementById('theme-toggle');
+        if (btn) {
+            btn.innerText = theme === 'dark-mode' ? 'Light Mode' : 'Dark Mode';
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', updateThemeToggleText);
+</script>
+</body>
+</html>
