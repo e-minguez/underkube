@@ -1,3 +1,18 @@
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #eee;
+    color: #333;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.button:hover {
+    background-color: #ddd;
+    text-decoration: none;
+}
+
 .reading-list-button {
     background-color: #9b59b6 !important; /* Purple */
     color: #fff !important;
@@ -9,12 +24,12 @@
 }
 
 /* Improve mobile navigation layout */
-nav.navigation a {
+nav a {
     display: inline-block;
 }
 
 @media (max-width: 700px) {
-    nav.navigation a {
+    nav a {
         margin-bottom: 5px;
     }
 }

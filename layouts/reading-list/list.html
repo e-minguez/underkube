@@ -1,39 +1,17 @@
 {{ define "main" }}
-{{ partial "profile.html" . }}
-
-<section id="archive">
+<main class="list">
+    <div class="site-description">
+        <p>Reading List</p>
+    </div>
     {{ $pages := where .Site.RegularPages "Section" "reading-list" }}
     {{ range $pages.GroupByDate "2006" }}
-        <div class="group">
-            <h3 class="key">
-                {{ .Key }}
-            </h3>
-
-            {{ range .Pages }}
-                <div class="value">
-                  <div class="date">
-                    <time datetime="{{ .PublishDate }}">{{ i18n "publishDateShort" . }}</time>
-                  </div>
-                  <div class="title">
-                      <a href="{{ .Permalink }}">
-                          {{ .Title }}
-                      </a>
-
-                      {{ with .Params.tags }}
-                          <div class="tags">
-                              {{ range . }}
-                                  <a href="{{ "tags/" | absURL }}{{ . | urlize }}">{{ . }}</a>
-                              {{ end }}
-                          </div>
-                      {{ end}}
-                  </div>
-                </div>
-            {{ end }}
-        </div>
+        <h3 class="group-title">{{ .Key }}</h3>
+        {{ range .Pages }}
+        <section class="list-item">
+            <h1 class="title"><a href="{{ .Permalink }}">{{ .Title }}</a></h1>
+            <time>{{ .PublishDate.Format "Jan 2, 2006" }}</time>
+        </section>
+        {{ end }}
     {{ end }}
-
-
-</section>
-
-
+</main>
 {{ end }}

@@ -1,79 +1,66 @@
 baseURL = "https://www.underkube.com/"
-title = "Underkube"
-theme = "mini"
-hasCJKLanguage = false
 languageCode = "en-us"
+title = "Underkube"
+theme = "archie"
 googleAnalytics = "UA-143530243-1"
 
 [params]
-  description = "Tips, tricks and all things k8s/OpenShift/containers/etc"
+  mode = "toggle"
+  useCDN = false
+  subtitle = "Tips, tricks and all things k8s/OpenShift/containers/etc"
   author = "Eduardo Mínguez"
-  twitter = "minWi"
+  description = "Tips, tricks and all things k8s/OpenShift/containers/etc"
+
+  # Preserved from old config for overrides
+  enableGoogleAnalytics = true
   enableRSS = true
-	enableToc = true
-  enableComments = true
-  enableDisqus = false
-  enableSummary = false
-  # Set the value to true if use description in post front matter replace content summary
-	useDescriptionReplaceSummary = false
 
-	enableGoogleAnalytics = true
-	enableBaiduAnalytics = false
-
-  enableTwitterCard = true
-  # The url for twitter card image, default is avatar.png in static/images directory
-  twitterCardImage = ""
-
-  # Add custom assets with their paths relative to the static folder
   customCSS = ["css/custom.css"]
-  customJS  = []
 
-  # The variables below are optionally too and can be used to
-  # translate or customize each string of the theme.
-
-  # Navigation links
-  home = ""
-  about = ""
-  archive = "All Posts"
-  subscribe = ""
-
-  olderPosts = ""
-  newerPosts = ""
-  copyright = ""
-
-  # show latest posts in single page
-  showLatestPosts = false
-  readMore = ""
-
-  # Share
-  enableShare = true
-  tweet = ""
-  share = ""
-
-  # 404 page
-  title404 = ""
-  subtitle404 = ""
-
-  # Choose a font for the social icons in the footer. Either "mono-social" or "font-awesome"
-  iconFont = "font-awesome"
-  # The social icons can be styled differently if you use mono as font - circle, rounded, or empty
-  socialIconStyle = ""
-
-
-  # Add additional social link entries underneath
-  [social]
-  twitter = "https://www.twitter.com/minwi"
-  github = "https://github.com/e-minguez/underkube"
-
-[[params.Links]]
+[[params.social]]
   name = "GitHub"
-  path = "https://github.com/e-minguez/underkube"
+  icon = "github"
+  url = "https://github.com/e-minguez/underkube"
 
-[[params.Links]]
+[[params.social]]
+  name = "Twitter"
+  icon = "twitter"
+  url = "https://www.twitter.com/minwi"
+
+[[menu.main]]
+  name = "Home"
+  url = "/"
+  weight = 1
+
+[[menu.main]]
+  name = "All Posts"
+  url = "/posts"
+  weight = 2
+
+[[menu.main]]
+  name = "Tags"
+  url = "/tags"
+  weight = 3
+
+[[menu.main]]
+  name = "About"
+  url = "/about"
+  weight = 4
+
+[[menu.main]]
   name = "Reading List"
-  path = "/reading-list/"
-  class = "button reading-list-button"
+  url = "/reading-list/"
+  weight = 5
+  [menu.main.params]
+    class = "button reading-list-button"
+
+[[menu.main]]
+  name = "Subscribe"
+  url = "/index.xml"
+  weight = 6
+  [menu.main.params]
+    class = "button"
 
 [permalinks]
-posts = "/:slug/"
-reading-list = "/:slug/"
+  posts = "/:slug/"
+  reading-list = "/:slug/"

@@ -1,55 +1,49 @@
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">    
-<meta name="viewport" content="width=device-width,minimum-scale=1">
-<!-- https://www.preciouschicken.com/blog/posts/hugo-tags-to-keywords -->
+{{- define "feathericon" -}}
+  {{- if eq .Icon "sun" -}}
+    <svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  {{- else if eq .Icon "moon" -}}
+    <svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  {{- else -}}
+    <!-- Fallback for other icons - use sprite method -->
+    {{- $featherURL := "https://unpkg.com/feather-icons@4.29.2/dist/feather-sprite.svg" -}}
+    {{- if not (.UseCDN | default false) -}}
+      {{- $svgResource := resources.Get "svg/feather-sprite.svg" -}}
+      {{- if $svgResource -}}
+        {{- $featherURL = ($svgResource | fingerprint).RelPermalink -}}
+      {{- else -}}
+        {{- $featherURL = (absURL "svg/feather-sprite.svg") -}}
+      {{- end -}}
+    {{- end -}}
+    <svg class="feather">
+       <use href="{{ printf "%s#%s" $featherURL .Icon }}" />
+    </svg>
+  {{- end -}}
+{{- end -}}
 
-<meta name="description" content="{{ if .Params.Description }}{{ .Params.Description }}{{ else if .Site.Params.Description }}{{ .Site.Params.Description }}{{ else }}Freelance software{{ end }}" /> 
-{{ hugo.Generator }}
-{{/* NOTE: For Production make sure you add `HUGO_ENV="production"` before your build command */}}
-{{ if eq (getenv "HUGO_ENV") "production" | or (eq .Site.Params.env "production")  }}
-  <META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
-{{ else }}
-  <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-{{ end }}
+<header>
+	<div class="main">
+		<a href="{{ absLangURL "/" }}">{{ .Site.Title }}</a>
+	</div>
+	<nav>
+		{{ range .Site.Menus.main }}
+		    <a href="{{ .URL }}" {{ with .Params.class }}class="{{ . }}"{{ end }}>{{ .Name }}</a>
+		{{ end }}
 
-<link rel="stylesheet" href="{{ "/css/style.css" | relURL }}">
-
-{{ range .Site.Params.customCSS }}
-  {{ if ( or ( hasPrefix . "http://" ) ( hasPrefix . "https://" ) ) }}
-    <!-- remote css -->
-    <link rel="stylesheet" href="{{ . }}">
-  {{ else }}
-    <!-- local css -->
-    <link rel="stylesheet" href="{{ $.Site.BaseURL }}{{ . }}">
-  {{ end }}
-{{ end }}
-
-<link rel="shortcut icon" href="{{ "/images/favicon.ico" | relURL }}" type="image/x-icon" />
-
-{{ if .Site.Params.enableGoogleAnalytics }} 
-    {{ template "_internal/google_analytics.html" . }}
-{{ end }}
-
-{{ if or .Params.math .Site.Params.math }}
-  {{ partial "math.html" . }}
-{{ end }}
-
-{{ if .OutputFormats.Get "RSS" }}
-  {{ with .OutputFormats.Get "RSS" }}
-    <link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" />
-    <link href="{{ .RelPermalink }}" rel="feed" type="application/rss+xml" title="{{ $.Site.Title }}" />
-  {{ end }}
-{{ end }}
-
-<!-- Added keywords -->
-<meta name="keywords" content="{{ with .Params.tags }}{{ delimit . ", "}}{{ end }}" />
-<!-- Added canonical link -->
-<link rel="canonical" href="{{ .Permalink }}" />
-
-<script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_uEqii0McatXuj5LJOegCHPbPJOk3px5r9cF2qGV0AiG', {
-        api_host:'https://eu.i.posthog.com',
-        person_profiles: 'identified_only' // or 'always' to create profiles for anonymous users as well
-    })
-</script>
+		{{ if eq .Site.Params.mode "toggle" -}}
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button">{{template "feathericon" (dict "UseCDN" .Site.Params.useCDN "Icon" "sun") }}</button>
+		<script src="{{ absURL "js/themetoggle.js" }}"></script>
+		{{ end }}
+	</nav>
+</header>
