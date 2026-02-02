@@ -1,0 +1,50 @@
+:root {
+    --accent: #ff6600; /* Orange highlight */
+}
+
+/* Re-apply button styles */
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #eee;
+    color: #333;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.button:hover {
+    background-color: #ddd;
+    text-decoration: none;
+}
+
+.reading-list-button {
+    background-color: var(--accent) !important; /* Orange */
+    color: #fff !important;
+    margin-left: 12px;
+}
+.reading-list-button:hover {
+    background-color: #e65c00 !important; /* Darker Orange */
+    color: #fff !important;
+}
+
+/* Improve mobile navigation layout */
+nav a {
+    display: inline-block;
+}
+
+@media (max-width: 700px) {
+    nav a {
+        margin-bottom: 5px;
+    }
+}
+
+/* Override selection color if not handled by --accent in all places */
+::selection {
+    background: #ff6600;
+    color: #fff;
+}
+::-moz-selection {
+    background: #ff6600;
+    color: #fff;
+}
