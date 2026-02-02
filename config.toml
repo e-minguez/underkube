@@ -15,8 +15,6 @@ googleAnalytics = "UA-143530243-1"
   enableGoogleAnalytics = true
   enableRSS = true
 
-  customCSS = ["css/custom.css"]
-
 [[params.social]]
   name = "GitHub"
   icon = "github"
@@ -51,15 +49,11 @@ googleAnalytics = "UA-143530243-1"
   name = "Reading List"
   url = "/reading-list/"
   weight = 5
-  [menu.main.params]
-    class = "button reading-list-button"
 
 [[menu.main]]
   name = "Subscribe"
   url = "/index.xml"
   weight = 6
-  [menu.main.params]
-    class = "button"
 
 [permalinks]
   posts = "/:slug/"
