@@ -10,7 +10,7 @@ googleAnalytics = "UA-143530243-1"
   subtitle = "Tips, tricks and all things Kubernetes containers, cloud native, AI, etc"
   author = "Eduardo Mínguez"
   description = "Tips, tricks and all things Kubernetes containers, cloud native, AI, etc"
-  logo = "/images/underkube-logo-100px.png"
+  logo = "/images/avatar.png"
 
   # Preserved from old config for overrides
   enableGoogleAnalytics = true
