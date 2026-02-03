@@ -2,4 +2,4 @@
 Lo ideal es colocarlo en /usr/local/bin/shutdown con 100 de permisos, y luego en el /etc/profile/, colocar un:
 alias shutdown=&amp;quot;/usr/local/bin/shutdown&amp;quot; alias reboot=&amp;quot;/usr/local/bin/reboot&amp;quot;
 `#!/bin/bash
-Script para impedir el reboot de maquinas de producción 🔗Para ello, una vez invocado shutdown o el reboot, pide el nombre del host 🔗HOSTNAME=hostname BIN_DIR=/sbin/</description></item></channel></rss>
+Script para impedir el reboot de maquinas de producción Para ello, una vez invocado shutdown o el reboot, pide el nombre del host HOSTNAME=hostname BIN_DIR=/sbin/</description></item></channel></rss>
