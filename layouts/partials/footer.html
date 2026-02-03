@@ -1,0 +1,27 @@
+<footer>
+  <div style="display:flex">
+    {{- range $index, $key := .Site.Params.Social -}}
+    {{- if hasPrefix $key.icon "simple:" -}}
+    <a class="soc" href="{{ $key.url }}" rel="me" title="{{ $key.name }}"><i class="si si-{{ substr $key.icon 7 }}"></i></a>
+    {{- else -}}
+    <a class="soc" href="{{ $key.url }}" rel="me" title="{{ $key.name }}">{{ template "feathericon" (dict "Icon" $key.icon "UseCDN" .Site.Params.useCDN) }}</a>
+    {{- end -}}
+    {{- if ne (add $index 1) (len $.Site.Params.Social) -}}
+    <a class="border"></a>
+    {{- end -}}
+    {{- end -}}
+  </div>
+  <div class="footer-info">
+    {{ dateFormat "2006" now }} {{ with .Site.Copyright }} {{ . }} | {{ end }} <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+
+      <!-- LibreCounter -->
+      <br>
+      <a href="https://librecounter.org/referer/show" target="_blank">
+      <img src="https://librecounter.org/oldStyle.svg" referrerPolicy="unsafe-url" style="display:inline-block; vertical-align:middle;" />
+      </a>
+  </div>
+</footer>
+
+<!-- Buy Me A Coffee Widget -->
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="minwi" data-description="Support me on Buy me a coffee!" data-message="Gracias!" data-color="#FFDD00" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
