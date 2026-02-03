@@ -6,7 +6,9 @@
     {{- else -}}
     <a class="soc" href="{{ $key.url }}" rel="me" title="{{ $key.name }}">{{ template "feathericon" (dict "Icon" $key.icon "UseCDN" .Site.Params.useCDN) }}</a>
     {{- end -}}
+    {{- if ne (add $index 1) (len $.Site.Params.Social) -}}
     <a class="border"></a>
+    {{- end -}}
     {{- end -}}
   </div>
   <div class="footer-info">
