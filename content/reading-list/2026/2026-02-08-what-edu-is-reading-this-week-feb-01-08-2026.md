@@ -19,6 +19,8 @@ tags:
 
 This week is a massive roundup. The AI agent ecosystem is exploding with new tools (and security leaks), while the "privacy & tunneling" toolbox gets a major refill.
 
+![what-edu-is-reading-this-week-feb-02-08-2026](/images/2026-02-08-what-edu-is-reading-this-week-feb-01-08.png)
+
 ## AI, Agents & Security
 
 * [**Moltbook Database Exposure**](https://www.wiz.io/blog/exposed-moltbook-database-reveals-millions-of-api-keys) - Wiz reveals a massive breach in "Moltbook" where millions of API keys were exposed.
