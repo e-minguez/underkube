@@ -61,9 +61,19 @@ jobs:
           force: false
 
       - name: Deploy PR Preview
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: public
           preview-branch: gh-pages
           umbrella-dir: pr-preview
+          action: deploy
+
+      - name: Remove PR Preview
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: .
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
