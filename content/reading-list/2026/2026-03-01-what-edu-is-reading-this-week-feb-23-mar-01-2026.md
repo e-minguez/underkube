@@ -18,7 +18,7 @@ tags:
 - kubernetes
 ---
 
-This week's roundup is a massive one, covering everything from the architectural limits of etcd and GPU-initiated networking to the nostalgic design of Apple's breathing lights and the surprising persistence of floppy disks in transit systems.
+This week's roundup covers a wide range of topics, including the architectural limits of etcd, GPU-initiated networking, the nostalgic design of Apple's breathing lights, and the surprising persistence of floppy disks in transit systems.
 
 ![what-edu-is-reading-this-week-feb-23-mar-01-2026](/images/2026-03-01-what-edu-is-reading-this-week-feb-23-mar-01.png)
 

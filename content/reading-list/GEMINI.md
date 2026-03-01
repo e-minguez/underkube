@@ -40,7 +40,7 @@ tags:
 ## Body Structure
 
 ### 1. Introduction
-A brief one or two sentence introduction summarizing the week's themes or personal highlights.
+A brief one or two sentence introduction summarizing the week's themes or personal highlights. **Avoid exaggerated language or clickbait-style words (e.g., do not use words like "massive").** Keep the tone professional and grounded.
 
 ### 2. Featured Image
 Recent posts include a featured image located in `/static/images/`. Reference it using the following syntax immediately after the introduction:
