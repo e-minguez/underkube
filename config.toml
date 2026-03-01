@@ -3,6 +3,7 @@ languageCode = "en-us"
 title = "Underkube"
 theme = "archie"
 googleAnalytics = "UA-143530243-1"
+ignoreFiles = ["GEMINI.md"]
 
 [params]
   mode = "toggle"
