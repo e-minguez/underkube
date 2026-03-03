@@ -1,9 +1,0 @@
-html[theme='dark-mode'] {
-  filter: invert(1) hue-rotate(180deg);
-}
-
-html[theme='dark-mode'] img,
-html[theme='dark-mode'] video,
-html[theme='dark-mode'] iframe {
-  filter: invert(1) hue-rotate(180deg);
-}
