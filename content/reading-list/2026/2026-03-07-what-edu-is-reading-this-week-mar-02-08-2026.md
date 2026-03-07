@@ -1,9 +1,9 @@
 ---
 title: "What Edu is reading this week (March 2 to 8, 2026)"
-date: 2026-03-08T09:00:00+01:00
+date: 2026-03-07T15:30:00+01:00
 draft: false
-slug: 2026-03-08-what-edu-is-reading-this-week-mar-02-08-2026
-aliases: ["/posts/2026-03-08-what-edu-is-reading-this-week-mar-02-08-2026/"]
+slug: 2026-03-07-what-edu-is-reading-this-week-mar-02-08-2026
+aliases: ["/posts/2026-03-07-what-edu-is-reading-this-week-mar-02-08-2026/"]
 categories: ["Reading"]
 tags: ["newsletter", "links", "tech", "ai", "agents", "security", "linux", "terminal"]
 ---
