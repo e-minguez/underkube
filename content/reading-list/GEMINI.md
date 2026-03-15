@@ -70,5 +70,10 @@ Links should be formatted as a bulleted list:
 If there are multiple related links (e.g., an article and a discussion thread):
 `* [**Main Link**](URL) / [**Discussion**](URL): Description.`
 
-### 5. Section Separators (Optional)
+### 5. Link Retrieval & Verification
+When processing links:
+- **No Hallucination:** If the content or title of a link cannot be successfully retrieved (e.g., due to tool failures, paywalls, or bot protection), **DO NOT** hallucinate or guess the title or description.
+- **Manual Verification:** If a link's information is unavailable, list the URL in your response and ask the user to provide the title and description manually.
+
+### 6. Section Separators (Optional)
 For very long posts, use `***` or `---` to separate major thematic groups if H2 headers alone are insufficient.
