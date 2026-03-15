@@ -1,6 +1,6 @@
 ---
 title: "What Edu is reading this week (March 9 - 15, 2026)"
-date: 2026-03-15T18:00:00+01:00
+date: 2026-03-15T13:30:00+01:00
 draft: false
 slug: 2026-03-15-what-edu-is-reading-this-week-mar-09-15-2026
 aliases: ["/posts/2026-03-15-what-edu-is-reading-this-week-mar-09-15-2026/"]
