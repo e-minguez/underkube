@@ -22,8 +22,6 @@ tags:
 
 A diverse week featuring deep dives into Btrfs scaling, a flurry of new AI agent control planes, and some critical security updates for CI/CD pipelines.
 
-![featured-image](/images/2026-03-22-what-edu-is-reading-this-week-mar-16-22.png)
-
 ## Cloud, Kubernetes & Infrastructure
 
 * [**FOSDEM 2026 - The Filesystem Diaries: Scaling Btrfs in an Enterprise**](https://fosdem.org/2026/schedule/event/YVK8KP-scaling-btrfs-in-an-enterprise/) - A detailed look at the challenges and solutions for employing Btrfs at scale in large organizational environments.
@@ -81,5 +79,5 @@ A diverse week featuring deep dives into Btrfs scaling, a flurry of new AI agent
 * [**Making A Giant Zipper To Explain How It Works**](https://www.youtube.com/watch?v=9szhjhO9epA) - A mechanical deep dive into the surprisingly complex world of the common zipper.
 * [**Surface-Stable Fractal Dithering Explained**](https://youtube.com/watch?v=HPqGaIMVuLs) - A technical explanation of graphics dithering techniques that remain stable across surfaces.
 * [**picoCAD 2 Basics in 5 minutes**](https://youtube.com/watch?v=ejpmTDYOBmI) - Getting started with the latest version of the popular low-poly 3D modeling tool.
-* [**theflow0 on Valve's 2026 Hardware**](https://x.com/i/status/2030011206040256841) - Security researcher Andy Nguyen's ported Linux to the PS5 and turned it into a Steam Machine. Running GTA 5 Enhanced with Ray Tracing.
+* [**theflow0 ported Linux to the PS5**](https://x.com/i/status/2030011206040256841) - Security researcher Andy Nguyen's ported Linux to the PS5 and turned it into a Steam Machine. Running GTA 5 Enhanced with Ray Tracing.
 * [**maclock**](https://github.com/fensoft/maclock) - A fun project retrofitting an ESP32 and LCD into a classic Macintosh enclosure.
