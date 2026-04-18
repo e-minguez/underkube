@@ -1,10 +1,10 @@
 ---
 title: "What Edu is reading this week (April 13 - 19, 2026)"
-date: 2026-04-18T10:00:00+02:00
+date: 2026-04-19T10:00:00+02:00
 draft: false
-slug: 2026-04-18-what-edu-is-reading-this-week-apr-13-19-2026
+slug: 2026-04-19-what-edu-is-reading-this-week-apr-13-19-2026
 aliases:
-  - /posts/2026-04-18-what-edu-is-reading-this-week-apr-13-19-2026/
+  - /posts/2026-04-19-what-edu-is-reading-this-week-apr-13-19-2026/
 categories:
   - Reading
 tags:
@@ -20,7 +20,7 @@ tags:
 
 This week's highlights feature the latest in AI agent orchestration, local LLM accessibility on Apple hardware, and a nostalgic trip through classic Mac OS emulation and ports.
 
-![Reading list header image](/images/2026-04-18-what-edu-is-reading-this-week-apr-13-19.png)
+![Reading list header image](/images/2026-04-19-what-edu-is-reading-this-week-apr-13-19.png)
 
 ## Cloud, Kubernetes & Infrastructure
 * [**Flightdeck**](https://github.com/tsuz/flightdeck) - A fault-tolerant, event-driven AI agent framework built on Kafka that manages session context and infrastructure.
