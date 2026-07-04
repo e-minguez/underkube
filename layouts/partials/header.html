@@ -51,6 +51,10 @@
 		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="{{ $darkstyle.Permalink }}" {{ if eq .Site.Params.mode "auto" }}media="(prefers-color-scheme: dark)"{{ end }} {{ if eq .Site.Params.mode "toggle" }}disabled{{ end }} />
 	{{- end -}}
 
+	<!-- Pagefind search (self-hosted, generated into /pagefind/ by the CLI after build) -->
+	<link href="{{ absURL "pagefind/pagefind-component-ui.css" }}" rel="stylesheet">
+	<script src="{{ absURL "pagefind/pagefind-component-ui.js" }}" type="module"></script>
+
 	<!-- Mathjax support -->
 	{{- if .Site.Params.mathjax | default false -}}
 		<script type="text/javascript"

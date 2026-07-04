@@ -36,6 +36,12 @@ jobs:
           hugo-version: '0.128.0'
           extended: true
 
+      - name: Setup Node
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Build
         if: github.event.action != 'closed'
         run: |
@@ -50,6 +56,10 @@ jobs:
           else
             hugo --minify
           fi
+
+      - name: Pagefind
+        if: github.event.action != 'closed'
+        run: npx -y pagefind@1.5.2 --site public
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')

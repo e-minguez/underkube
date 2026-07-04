@@ -35,6 +35,62 @@
     color: #fff !important;
 }
 
+/* Pagefind search trigger - an icon-only utility control paired with the
+   dark-mode toggle (not a nav-destination button like Reading List or
+   Subscribe), mirroring .nav-toggle's look. Themed purely through CSS
+   custom properties: Pagefind hardens .pf-trigger-btn's own rule against
+   overrides with a specificity-boosting :is(*, #\#) selector, so plain
+   class overrides for background/border/color lose the cascade even at
+   higher specificity - but var() lookups resolve by inheritance from
+   wherever the variable is set, sidestepping that entirely. */
+pagefind-modal-trigger {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 5px;
+    --pf-background: transparent;
+    --pf-border: transparent;
+    --pf-border-radius: 0px;
+    --pf-input-height: 30px;
+    --pf-text-muted: #232333; /* matches the light-mode sun icon stroke */
+}
+pagefind-modal-trigger:hover,
+pagefind-modal-trigger:focus-within {
+    --pf-background: var(--color-primary);
+    --pf-text-muted: #ffffff;
+}
+
+/* Dark mode: mirror nav-toggle's color swap - the trigger can't pick this
+   up automatically since the site toggles via JS, not prefers-color-scheme. */
+body:has(#dark-mode-toggle[data-theme="dark"]) pagefind-modal-trigger {
+    --pf-text-muted: #ffffff; /* matches the dark-mode moon icon stroke */
+}
+body:has(#dark-mode-toggle[data-theme="dark"]) pagefind-modal-trigger:hover,
+body:has(#dark-mode-toggle[data-theme="dark"]) pagefind-modal-trigger:focus-within {
+    --pf-background: var(--color-primary);
+    --pf-text-muted: #000000;
+}
+
+/* Pagefind modal - theme with the site's accent color for focus/highlight. */
+pagefind-modal {
+    --pf-border-focus: var(--color-primary);
+    --pf-outline-focus: var(--color-primary);
+    --pf-mark: var(--color-primary);
+}
+
+/* Dark mode: the site toggles a data-theme attribute via JS rather than
+   prefers-color-scheme, so Pagefind's own auto dark mode never kicks in.
+   Only the modal's interior follows dark mode - the trigger button stays
+   static like the other nav buttons (Reading List, Subscribe). */
+body:has(#dark-mode-toggle[data-theme="dark"]) pagefind-modal {
+    --pf-background: var(--color-background-dark, #202124);
+    --pf-text: var(--color-text-dark, #ffffff);
+    --pf-text-secondary: var(--color-text-muted-dark, #dddddd);
+    --pf-text-muted: var(--color-text-muted-dark, #dddddd);
+    --pf-border: rgba(255, 255, 255, 0.15);
+    --pf-hover: color-mix(in srgb, var(--color-primary) 15%, transparent);
+    --pf-modal-backdrop: rgba(0, 0, 0, 0.6);
+}
+
 /* Improve mobile navigation layout */
 nav a {
     display: inline-block;
