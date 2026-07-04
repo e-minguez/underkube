@@ -23,6 +23,8 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      PAGEFIND_VERSION: '1.5.2'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,6 +44,13 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Cache Pagefind
+        if: github.event.action != 'closed'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm/_npx
+          key: npx-pagefind-${{ env.PAGEFIND_VERSION }}
+
       - name: Build
         if: github.event.action != 'closed'
         run: |
@@ -59,7 +68,7 @@ jobs:
 
       - name: Pagefind
         if: github.event.action != 'closed'
-        run: npx -y pagefind@1.5.2 --site public
+        run: npx -y "pagefind@$PAGEFIND_VERSION" --site public
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
