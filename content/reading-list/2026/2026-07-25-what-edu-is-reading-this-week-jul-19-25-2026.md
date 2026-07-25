@@ -68,6 +68,7 @@ A week of open-weight model routing and local AI tooling, OCI-backed package man
 * [**Jelly UI — Soft Web Components**](https://jelly-ui.com/): A dependency-free Web Components library for tactile interfaces — soft-body physics, real form controls, dark mode, RTL and WCAG AA accessibility.
 * [**GitHub suddenly rejected my SSH key (the fix was a .pub file?!)**](https://thorsell.io/2026/07/21/github-ssh-keys.html): git pull stopped working with permission denied out of nowhere — and the fix turned out to involve the .pub file.
 * [**is-a.dev Documentation**](https://docs.is-a.dev/): Docs for is-a.dev — guides, the JSON file structure and how to claim a free developer subdomain.
+* [**Two Stop Bits: Downtime...**](https://twostopbits.com/item?id=9340): The retro-computing community explains the downtime the site suffered, apparently the result of a DDoS.
 
 ## Hardware, Retro & Fun
 
