@@ -24,6 +24,8 @@ tags:
 
 Back from holidays, so this one covers everything that piled up over the last month: new model releases, Slurm on Kubernetes, a lot of BSD, the Omarchy funding argument, ADS-B receivers and a stack of retro and homelab projects.
 
+**Heads up: this is a long one.** A month of links in a single post — around 140 of them across thirteen sections. Feel free to skip to the sections you care about rather than reading it top to bottom.
+
 ## AI, Models & Agents
 
 * [**Introducing Claude Fable 5.1 and Claude Mythos 5.1**](https://www.anthropic.com/claude-fable-and-mythos-5-1): Anthropic's latest models for coding and knowledge work, with an early look at how they contribute to scientific research.
@@ -160,6 +162,7 @@ Back from holidays, so this one covers everything that piled up over the last mo
 
 * [**MartyPC Web Edition**](https://martypc.net/?machine_config_name=ibm5150_xtide&machine_config_overlays=ibm_cga&scaler_preset=IBM+5153): An IBM PC/XT emulator written in Rust, now compiled for the web.
 * [**slap**](https://slap.nyuu.page/) / [**project page**](https://nyuu.page/projects/slap/): Apply, create, convert and inspect ROM patches in twenty formats, in the browser or the terminal.
+* [**GoldenEye 007 100% Decompiled**](https://defaultdnb.github.io/ReCollect64/blog.html#b397): The N64 classic reaches a complete, matching decompilation.
 * [**BlackLabelHQ/SymphonyRecomp**](https://github.com/BlackLabelHQ/SymphonyRecomp): A static recompilation project for Castlevania: Symphony of the Night.
 * [**Midrags/SFF**](https://github.com/Midrags/SFF): A Steam game setup and management tool covering manifests, Lua integrations, multiplayer fixes and backups.
 * [**Game Bundle Guardian**](https://gamebundleguardian.com/bundles?sort=worthiest): Compare Humble, Fanatical and other bundles — guarding your wallet from games you will never install.
