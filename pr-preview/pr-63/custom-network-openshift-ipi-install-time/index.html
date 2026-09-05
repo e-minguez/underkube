@@ -1,0 +1,156 @@
+<!doctype html><html><head lang=en><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Customizing OpenShift 4 baremetal IPI network at installation time - Underkube</title><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon>
+<meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="When deploying OpenShift IPI on baremetal, there is only so much you can tweak at installation time in terms of networking. Of course you can do changes after the installation, such as applying bonding configurations or vlan settings via machine configs&mldr; but what if you need those changes at installation time?
+In my case, I have an OpenShift environment composed by physical servers where each of them have 4 NICs. 1 unplugged NIC, 1 NIC connected to the provisioning network and 2 NICs connected to the same switch and to the same baremetal subnet."><meta property="og:image" content="https://www.underkube.com/pr-preview/pr-63/"><meta property="og:url" content="https://www.underkube.com/pr-preview/pr-63/custom-network-openshift-ipi-install-time/"><meta property="og:site_name" content="Underkube"><meta property="og:title" content="Customizing OpenShift 4 baremetal IPI network at installation time"><meta property="og:description" content="When deploying OpenShift IPI on baremetal, there is only so much you can tweak at installation time in terms of networking. Of course you can do changes after the installation, such as applying bonding configurations or vlan settings via machine configs… but what if you need those changes at installation time?
+In my case, I have an OpenShift environment composed by physical servers where each of them have 4 NICs. 1 unplugged NIC, 1 NIC connected to the provisioning network and 2 NICs connected to the same switch and to the same baremetal subnet."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-03-08T08:30:00+00:00"><meta property="article:modified_time" content="2021-03-08T08:30:00+00:00"><meta property="article:tag" content="Baremetal"><meta property="article:tag" content="Ipi"><meta property="article:tag" content="Network"><meta property="article:tag" content="Openshift"><meta name=twitter:card content="summary"><meta name=twitter:title content="Customizing OpenShift 4 baremetal IPI network at installation time"><meta name=twitter:description content="When deploying OpenShift IPI on baremetal, there is only so much you can tweak at installation time in terms of networking. Of course you can do changes after the installation, such as applying bonding configurations or vlan settings via machine configs… but what if you need those changes at installation time?
+In my case, I have an OpenShift environment composed by physical servers where each of them have 4 NICs. 1 unplugged NIC, 1 NIC connected to the provisioning network and 2 NICs connected to the same switch and to the same baremetal subnet."><link href=https://www.underkube.com/pr-preview/pr-63/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://www.underkube.com/pr-preview/pr-63/css/main.a87126a5d38398207e58225b2d1a9faf97f546982f44b3ffb9715a264da36c90.css><link id=darkModeStyle rel=stylesheet type=text/css href=https://www.underkube.com/pr-preview/pr-63/css/dark.f163b79c6de51d14a766ff9f0563053de7f06a4d1bf7b85a59608bf96e566710.css disabled><link href=https://www.underkube.com/pr-preview/pr-63/pagefind/pagefind-component-ui.css rel=stylesheet><script src=https://www.underkube.com/pr-preview/pr-63/pagefind/pagefind-component-ui.js type=module></script><link rel=stylesheet type=text/css href=https://www.underkube.com/pr-preview/pr-63/css/custom.16f8400ff12c03dab71a8813414b57ccd6e4ed4178a4f5311fce6f74ea0bbc6e.css><meta name=generator content="Hugo 0.128.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><meta name=keywords content="baremetal,ipi,network,openshift"><link rel=canonical href=https://www.underkube.com/pr-preview/pr-63/custom-network-openshift-ipi-install-time/><script>!function(e,t){var n,s,o,i;t.__SV||(window.posthog=t,t._i=[],t.init=function(a,r,c){function d(e,t){var n=t.split(".");2==n.length&&(e=e[n[0]],t=n[1]),e[t]=function(){e.push([t].concat(Array.prototype.slice.call(arguments,0)))}}(n=e.createElement("script")).type="text/javascript",n.crossOrigin="anonymous",n.async=!0,n.src=r.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(i=e.getElementsByTagName("script")[0]).parentNode.insertBefore(n,i);var l=t;for(void 0!==c?l=t[c]=[]:c="posthog",l.people=l.people||[],l.toString=function(e){var t="posthog";return"posthog"!==c&&(t+="."+c),e||(t+=" (stub)"),t},l.people.toString=function(){return l.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),s=0;s<o.length;s++)d(l,o[s]);t._i.push([a,r,c])},t.__SV=1)}(document,window.posthog||[]),posthog.init("phc_uEqii0McatXuj5LJOegCHPbPJOk3px5r9cF2qGV0AiG",{api_host:"https://eu.i.posthog.com",person_profiles:"identified_only"})</script></head><body><div class=content><header><div class=main><a href=https://www.underkube.com/><img src=/images/avatar.png alt=Underkube></a></div><nav><a href=/pr-preview/pr-63/>Home</a>
+<a href=/pr-preview/pr-63/posts>All Posts</a>
+<a href=/pr-preview/pr-63/tags>Tags</a>
+<a href=/pr-preview/pr-63/about>About</a>
+<a href=/pr-preview/pr-63/reading-list/ class="button reading-list-button">Reading List</a>
+<a href=/pr-preview/pr-63/index.xml class=button>Subscribe</a>
+<pagefind-modal-trigger compact hide-shortcut aria-label=Search></pagefind-modal-trigger><button id=dark-mode-toggle class=nav-toggle onclick=toggleTheme() aria-label="Toggle dark mode" type=button><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+<script src=https://www.underkube.com/pr-preview/pr-63/js/themetoggle.js></script></nav></header><pagefind-modal reset-on-close></pagefind-modal><main><article data-pagefind-body><div class=post-container><div class=post-content><div class=title><h1 class=title>Customizing OpenShift 4 baremetal IPI network at installation time</h1><div class=meta>Posted on Mar 8, 2021</div></div><section class=body><p>When deploying OpenShift IPI on baremetal, there is only so much you can tweak
+at installation time in terms of networking. Of course you can do changes after
+the installation, such as applying bonding configurations or vlan settings via
+machine configs&mldr; but what if you need those changes at installation time?</p><p>In my case, I have an OpenShift environment composed by physical servers where
+each of them have 4 NICs. 1 unplugged NIC, 1 NIC connected to the provisioning
+network and 2 NICs connected to the same switch and to the same baremetal
+subnet. This is used to configure a bonding interface composed of those two
+NICs, but I wanted to use just a single NIC or switch to bonding without
+modifying the switches&rsquo; configuration&mldr; so to me, one NIC is the &lsquo;good one&rsquo;
+and it has a dhcp reservation and a DNS hostname already configured.
+As RHCOS requests a dhcp address on all NICs, I ended up with two different IPs
+for the baremetal subnet. This means that depending on which NIC gets the IP
+first (guess which one wins all the time), the hostname is either the proper one
+or one assigned via dhcp as well as the primary IP&mldr; which turns out bad for
+certificates and for kubernetes itself.</p><p>Let&rsquo;s start with the basics, disabling <code>ens3f1</code> at day 2.</p><h2 id=day-2>Day 2</h2><p>The easiest way <a href=https://unix.stackexchange.com/a/467085>I&rsquo;ve found</a> is
+basically creating a <code>machine-config</code> to disable the NIC completely, using some
+udev magic:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>ACTION<span style=color:#f92672>==</span><span style=color:#e6db74>&#34;add&#34;</span>, SUBSYSTEM<span style=color:#f92672>==</span><span style=color:#e6db74>&#34;net&#34;</span>, ENV<span style=color:#f92672>{</span>INTERFACE<span style=color:#f92672>}==</span><span style=color:#e6db74>&#34;ens3f1&#34;</span>, RUN<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;/bin/sh -c &#39;echo 1 &gt; /sys</span>$DEVPATH<span style=color:#e6db74>/device/remove&#39;&#34;</span>
+</span></span></code></pre></div><p>The avid reader would ask&mldr; Why udev instead of just disabling it via
+NetworkManager? Because I wanted to test Contrail and the operator requires to
+<a href=https://raw.githubusercontent.com/Juniper/contrail-operator/R2011/deploy/openshift/openshift/99_master_network_manager_stop_service.yaml>disable NetworkManager</a> :)</p><p>The <code>machine-config</code> will look like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>machineconfiguration.openshift.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>MachineConfig</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>machineconfiguration.openshift.io/role</span>: <span style=color:#ae81ff>master</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>masters-disable-ens3f1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>config</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>ignition</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>config</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>security</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>tls</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>timeouts</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#ae81ff>2.2.0</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>networkd</span>: {}
+</span></span><span style=display:flex><span>    <span style=color:#f92672>passwd</span>: {}
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storage</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>files</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>contents</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>source</span>: <span style=color:#ae81ff>data:text/plain;charset=utf-8;base64,QUNUSU9OPT0iYWRkIiwgU1VCU1lTVEVNPT0ibmV0IiwgRU5We0lOVEVSRkFDRX09PSJlbnMzZjEiLCBSVU4rPSIvYmluL3NoIC1jICdlY2hvIDEgPiAvc3lzJERFVlBBVEgvZGV2aWNlL3JlbW92ZSciCg==                                                      </span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>verification</span>: {}
+</span></span><span style=display:flex><span>        <span style=color:#f92672>filesystem</span>: <span style=color:#ae81ff>root</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>mode</span>: <span style=color:#ae81ff>420</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>path</span>: <span style=color:#ae81ff>/etc/udev/rules.d/90-disable-ens3f1.rules</span>
+</span></span><span style=display:flex><span>---
+</span></span><span style=display:flex><span><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>machineconfiguration.openshift.io/v1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>kind</span>: <span style=color:#ae81ff>MachineConfig</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>metadata</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>labels</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>machineconfiguration.openshift.io/role</span>: <span style=color:#ae81ff>worker</span>
+</span></span><span style=display:flex><span>  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>workers-disable-ens3f1</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>spec</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>config</span>:
+</span></span><span style=display:flex><span>    <span style=color:#f92672>ignition</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>config</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>security</span>:
+</span></span><span style=display:flex><span>        <span style=color:#f92672>tls</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>timeouts</span>: {}
+</span></span><span style=display:flex><span>      <span style=color:#f92672>version</span>: <span style=color:#ae81ff>2.2.0</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>networkd</span>: {}
+</span></span><span style=display:flex><span>    <span style=color:#f92672>passwd</span>: {}
+</span></span><span style=display:flex><span>    <span style=color:#f92672>storage</span>:
+</span></span><span style=display:flex><span>      <span style=color:#f92672>files</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#f92672>contents</span>:
+</span></span><span style=display:flex><span>          <span style=color:#f92672>source</span>: <span style=color:#ae81ff>data:text/plain;charset=utf-8;base64,QUNUSU9OPT0iYWRkIiwgU1VCU1lTVEVNPT0ibmV0IiwgRU5We0lOVEVSRkFDRX09PSJlbnMzZjEiLCBSVU4rPSIvYmluL3NoIC1jICdlY2hvIDEgPiAvc3lzJERFVlBBVEgvZGV2aWNlL3JlbW92ZSciCg==                                                      </span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>verification</span>: {}
+</span></span><span style=display:flex><span>        <span style=color:#f92672>filesystem</span>: <span style=color:#ae81ff>root</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>mode</span>: <span style=color:#ae81ff>420</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>path</span>: <span style=color:#ae81ff>/etc/udev/rules.d/90-disable-ens3f1.rules</span>
+</span></span></code></pre></div><p>But&mldr; what if you need to do this at installation time? Imagine you need to
+configure your network settings (like vlan) at installation time in order to
+pull all the required assets for the installation to happen&mldr;</p><h2 id=install-time>Install time</h2><p>Doing this at installation time is a little bit more complex. There are a few
+places where the network configuration is set using IPI on bare metal.</p><ol><li><p>At installation time the hosts are booted via the baremetal operator using a
+&lsquo;discovery&rsquo; iso that performs some hardware inspection and writes the RHCOS base
+image in order to perform the OpenShift installation. This is fine and there is
+no need to tweak it as it is only a temporary state.</p></li><li><p>The first time RHCOS boots it requests a dhcp address on all network
+interfaces in order to be able to get the igntion configuration (served by the
+bootstrap VM) to customize itself. This is done via dracut at an early boot
+stage.</p></li><li><p>Then, when RHCOS is installed, it is already configured as &lsquo;request dhcp on
+all interfaces&rsquo;</p></li></ol><p>The proper way is being worked on. You can read about it in
+<a href=https://github.com/openshift/enhancements/blob/master/enhancements/machine-config/custom-ignition-machineconfig.md>this</a>
+OpenShift Enhancement (PS.- to me it is a good exercise to take a look at the
+OpenShift Enhancements to understand what is being cooked and all the machinery
+under the hood).</p><p>In the meantime, we will do a TOTALLY UNSUPPORTED and not recommended procedure.
+Basically we will disable RHCOS to request a dhcp address on the aforedmentioned
+NIC at boot as well as disable the NIC via a machine config at a later step.</p><h3 id=disable-rhcos-dhcp-request>Disable RHCOS dhcp request</h3><p>Basically the idea is to override the proper
+<a href=https://man7.org/linux/man-pages/man7/dracut.cmdline.7.html>dracut parameter</a>
+that disables dhcp requests on a particular interface. In this case:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>ip<span style=color:#f92672>=</span>ens3f1:off
+</span></span></code></pre></div><p>The RHCOS iso already has a mechansim enabled to override parameters at boot
+via <a href=https://github.com/coreos/ignition/commit/a65ec1667338518a44c75a21ceb955408c3061da>this commit</a>.</p><p>As the commit mentions, the content of the <code>/boot/ignition.firstboot</code> file will
+be used as network kcmdline arguments&mldr; so we just need to do the modifications
+we need there :)</p><p>It is important to mention that in order to enable it, we need to carry over
+the <code>rd.neednet=1</code> parameter to bring up network even without netroot.</p><p>Also, we want to request dhcp in all other interfaces, so the line we need looks
+like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>rd.neednet<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> ip<span style=color:#f92672>=</span>dhcp ip<span style=color:#f92672>=</span>ens3f1:off
+</span></span></code></pre></div><p>That&rsquo;s basically it&mldr; BUT as of today, there isn&rsquo;t a mechanism to provide
+extra variables like those&mldr; so we need to get our hands dirty&mldr;</p><h3 id=modifying-the-rhcos-image>Modifying the RHCOS image</h3><p>Again, this is totally UNSUPPORTED so don&rsquo;t blame me if your cluster is on fire
+after this modification :)</p><p>The baremetal IPI procedure uses the RHCOS OpenStack QCOW2 image (the baremetal
+operator uses ironic under the hood), so we will modify it using the awesome
+<a href=http://libguestfs.org/><code>guestfish</code></a> cli
+(<code>sudo dnf install -y libguestfs-tools-c</code> if using Fedora).</p><p>NOTE: The RHCOS image and in particular the partition schema has changed during
+the different OpenShift versions. I&rsquo;ve tested this procedure with OpenShift 4.6
+but probably won&rsquo;t work on 4.5 or 4.7 if the partitions are different, you need
+to figure out by yourself if that&rsquo;s the case :)</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>VERSION<span style=color:#f92672>=</span>4.6
+</span></span><span style=display:flex><span>IFACE<span style=color:#f92672>=</span>ens3f1
+</span></span><span style=display:flex><span>mkdir -p ~/html
+</span></span><span style=display:flex><span>curl -s -o ~/html/rhcos-openstack.x86_64.qcow2.gz https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/<span style=color:#e6db74>${</span>VERSION<span style=color:#e6db74>}</span>/latest/rhcos-openstack.x86_64.qcow2.gz
+</span></span><span style=display:flex><span>gunzip -c ~/html/rhcos-openstack.x86_64.qcow2.gz &gt; ~/html/rhcos-openstack.qcow2
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>cat <span style=color:#e6db74>&lt;&lt; EOF &gt; ~/html/ignition.firstboot
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>set ignition_network_kcmdline=&#39;rd.neednet=1 ip=dhcp ip=${IFACE}:off&#39;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>EOF</span>
+</span></span><span style=display:flex><span>chmod <span style=color:#ae81ff>600</span> ~/html/ignition.firstboot
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>pushd ~/html
+</span></span><span style=display:flex><span>guestfish -a rhcos-openstack.qcow2 -m /dev/sda1 copy-in ignition.firstboot /
+</span></span><span style=display:flex><span><span style=color:#75715e># Just to check</span>
+</span></span><span style=display:flex><span>guestfish -a rhcos-openstack.qcow2 -m /dev/sda1 cat /ignition.firstboot
+</span></span><span style=display:flex><span>SHA256<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>sha256sum &lt; rhcos-openstack.qcow2 | awk <span style=color:#e6db74>&#39;{ print $1 }&#39;</span><span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>gzip -k rhcos-openstack.qcow2
+</span></span><span style=display:flex><span>rm -f rhcos-openstack.x86_64.qcow2.gz ignition.firstboot
+</span></span><span style=display:flex><span>popd
+</span></span><span style=display:flex><span>echo <span style=color:#e6db74>&#34;Append platform.baremetal.clusterOSImage: http://path/to/rhcos-openstack.qcow2.gz?sha256=</span><span style=color:#e6db74>${</span>SHA256<span style=color:#e6db74>}</span><span style=color:#e6db74> to your install-config.yaml&#34;</span>
+</span></span></code></pre></div><p>Take note at the output as we will need it later, in particular the SHA256 sum
+of the uncompressed image.</p><h3 id=serving-the-image>Serving the image</h3><p>The easy part. You just need to serve that image somewhere via http. You can
+either install a webserver or run a container or reuse any webserver you already
+have (or use just <code>python3 -m http.server</code>, totally not recommended)</p><p>Also make sure the file is reachable from the hosts that will be part of the
+OpenShift cluster and note the URL and note the URL (something like
+<code>http://imawesome.com:8080/images/rhcos-openstack.qcow2.gz</code>)</p><h3 id=modifying-the-install-configyaml-file>Modifying the install-config.yaml file</h3><p>To be able to use that particular image, you need to modify the
+<code>platform.baremetal.clusterOSImage</code> parameter in the <code>install-config.yaml</code> file
+as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>...
+</span></span><span style=display:flex><span><span style=color:#f92672>platform</span>:
+</span></span><span style=display:flex><span>  <span style=color:#f92672>baremetal</span>:
+</span></span><span style=display:flex><span>    <span style=color:#ae81ff>...</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>clusterOSImage</span>: <span style=color:#ae81ff>http://imawesome.com:8080/images/rhcos-openstack.qcow2.gz?sha256=f209b731fff0cb5523f17953e69371469c0b2b80f6976cdb77abf59ee6c872ad</span>
+</span></span></code></pre></div><p>Where the <code>?sha256=f20...</code> parameter is mandatory and it should match the one
+from the output of the command you already executed before.</p><p>NOTE: As a reminder, the SHA256 sum is for the uncompressed image.</p><h3 id=disabling-the-nic-via-udev-at-install-time>Disabling the NIC via udev at install time</h3><p>The OpenShift installation allows you to inject extra manifests at installation
+time. So we will take advantage of that feature to disable the NIC via udev at
+installation time as well.</p><p>With our cooked <code>install-config.yaml</code> file in place, we can create the manifests
+as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>cd /path/to/my/install/config/file
+</span></span><span style=display:flex><span>openshift-install create manifests
+</span></span></code></pre></div><p>Then, we can copy the <code>masters-disable-ens3f1</code> and <code>workers-disable-ens3f1</code>
+machine configs in the <code>openshift/</code> folder with a proper name and order like:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>99_masters-disable-ens3f1.yaml
+</span></span><span style=display:flex><span>99_workers-disable-ens3f1.yaml
+</span></span></code></pre></div><p>Then, just deploy OpenShift as:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>openshift-install create cluster --dir<span style=color:#f92672>=</span>./ --log-level<span style=color:#f92672>=</span>debug
+</span></span></code></pre></div><p>Profit! :)</p></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/baremetal/>baremetal</a></li><li><a href=/tags/ipi/>ipi</a></li><li><a href=/tags/network/>network</a></li><li><a href=/tags/openshift/>openshift</a></li></ul></nav></div></div></div></article></main><footer><div style=display:flex><a class=soc href=https://github.com/e-minguez/underkube rel=me title=GitHub><svg class="feather"><use href="/pr-preview/pr-63/svg/feather-sprite.51cf5647cb1987f769b616558f2620fd9423d72058490231b391bf6aa3744b55.svg#github"/></svg></a><a class=border></a><a class=soc href=https://www.twitter.com/minwi rel=me title=Twitter><svg class="feather"><use href="/pr-preview/pr-63/svg/feather-sprite.51cf5647cb1987f769b616558f2620fd9423d72058490231b391bf6aa3744b55.svg#twitter"/></svg></a></div><div class=footer-info>2026 <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a><br><a href=https://librecounter.org/referer/show target=_blank><img src=https://librecounter.org/oldStyle.svg referrerpolicy=unsafe-url style=display:inline-block;vertical-align:middle></a></div></footer><script data-name=BMC-Widget data-cfasync=false src=https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js data-id=minwi data-description="Support me on Buy me a coffee!" data-message=Gracias! data-color=#FFDD00 data-position=Right data-x_margin=18 data-y_margin=18></script></div></body></html>
