@@ -128,4 +128,4 @@ After pushing, generate copy-paste-ready posts (no quotes) for all four platform
 - **Mastodon** (≤500 chars): Same sentence, expand into 4-5 emoji-prefixed bullet highlights + URL + relevant hashtags (`#tech #linux #ai` etc.).
 - **LinkedIn**: 2-3 sentence intro + bulleted highlights (5-7 items) + full URL.
 
-Base URL: `https://www.underkube.com/posts/<slug>/`
+Base URL: `https://www.underkube.com/<slug>/` (canonical post URL — use this in social copy). Note: `/posts/<slug>/` also resolves, but it is a client-side redirect stub marked `noindex` with no Open Graph metadata, so social platforms render an empty card for it. Never share the `/posts/...` form.
