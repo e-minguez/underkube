@@ -22,7 +22,7 @@ tags:
   - hardware
 ---
 
-Two frontier model releases shared the week with a widening set of small decision models and agent runtimes, and with more reports on how coding agents are changing day-to-day development. Jev is still trending — second week running — with benchmark tooling, an open implementation and drop-in skills for moving the small decisions off the frontier models. On the infrastructure side: kernel live-update work to keep VMs running, DRBD releases, router and Android tooling, and a Playdate app for watching live air traffic.
+Two frontier model releases shared the week with a widening set of small decision models and agent runtimes, and with more reports on how coding agents are changing day-to-day development. Jev is still trending for the second week running, with benchmark tooling, an open implementation and drop-in skills for moving the small decisions off the frontier models. On the infrastructure side: kernel live-update work to keep VMs running, DRBD releases, router and Android tooling, and a Playdate app for watching live air traffic.
 
 ## AI, Agents & Models
 
