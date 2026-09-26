@@ -59,7 +59,7 @@ tags:
 ## Body Structure
 
 ### 1. Introduction
-A brief one or two sentence introduction summarizing the week's themes or personal highlights. **Avoid exaggerated language or clickbait-style words (e.g., do not use words like "massive").** Keep the tone professional and grounded.
+A brief one or two sentence introduction summarizing the week's themes or personal highlights. **Avoid exaggerated language or clickbait-style words (e.g., do not use words like "massive").** Keep the tone professional and grounded. **Do not use em dashes (—) anywhere in the post**: use commas, parentheses or full stops instead.
 
 ### 2. Featured Image
 Recent posts include a featured image located in `/static/images/`. Reference it using the following syntax immediately after the introduction:
@@ -127,5 +127,7 @@ After pushing, generate copy-paste-ready posts (no quotes) for all four platform
 - **X / Bluesky** (≤280/300 chars): One catchy sentence summarising the highlights + the post URL.
 - **Mastodon** (≤500 chars): Same sentence, expand into 4-5 emoji-prefixed bullet highlights + URL + relevant hashtags (`#tech #linux #ai` etc.).
 - **LinkedIn**: 2-3 sentence intro + bulleted highlights (5-7 items) + full URL.
+
+Apply the same style rules as the post: no em dashes (—) and no clickbait wording.
 
 Base URL: `https://www.underkube.com/<slug>/` (canonical post URL — use this in social copy). Note: `/posts/<slug>/` also resolves, but it is a client-side redirect stub marked `noindex` with no Open Graph metadata, so social platforms render an empty card for it. Never share the `/posts/...` form.
