@@ -36,7 +36,7 @@ Two frontier model releases shared the week with a widening set of small decisio
 
 ## Decision Models & Small Runtimes
 
-* [**JevBench v1.2**](https://benchmarkheaven.com/jev-models) - Scores Jev, its open rebuilds and instruction models on intelligence, calibration, speed and cost, 25% each.
+* [**JevBench by Benchmark Heaven**](https://benchmarkheaven.com/jev-models) - Scores Jev, its open rebuilds and instruction models on intelligence, calibration, speed and cost, 25% each.
 * [**featherless-ai/simple-jev**](https://github.com/featherless-ai/simple-jev) / [**Simple Jev**](https://simple-jev.featherless.ai/) - An open source implementation of Jev that turns any open model into a classifier endpoint, with a demo API you can call without a key.
 * [**jaredpalmer/kev**](https://github.com/jaredpalmer/kev) - Small Jev-like decision models built on Qwen3.5 and Qwen3.8, with pretrained weights or a training run of your own.
 * [**mizorewww/laya-mlx**](https://github.com/mizorewww/laya-mlx) - A native MLX runtime for Laya typed decision models, reporting 7-14 ms short decisions on an M3 Max without text generation or a cloud API.
@@ -46,9 +46,9 @@ Two frontier model releases shared the week with a widening set of small decisio
 * [**Magic for self-learners**](https://www.reddit.com/r/hermesagent/comments/1wpe0wv/magic_for_selflearners/) - A r/hermesagent thread on how the latest models changed the way the author learns things, after years of using them badly.
 * [**madhvantyagi/Gnos**](https://github.com/madhvantyagi/Gnos) - A teaching harness that turns a coding agent into a teacher: it designs a curriculum, generates videos, simulations, images and PDFs, and tracks your learning style. Ships as Codex and Claude Code plugins under the MIT license.
 
-## Cloud, Kubernetes & Infrastructure
+## Cloud, Virtualization & Storage
 
-* [**Orphaned VMs: running VMs uninterrupted while the host kernel is offline**](https://www.phoronix.com/news/Orphaned-VMs-Linux-Patches) - RFC patches that keep guests executing on preserved physical CPUs across a host kernel live update, using the Live Update Orchestrator. Tested on Intel, AMD and Arm, and still very early work.
+* [**Orphaned VMs: running VMs uninterrupted while the host kernel is offline for reboots/updates**](https://www.phoronix.com/news/Orphaned-VMs-Linux-Patches) - RFC patches that keep guests executing on preserved physical CPUs across a host kernel live update, using the Live Update Orchestrator. Tested on Intel, AMD and Arm, and still very early work.
 * [**nestrilabs/virtio-nvgpu**](https://github.com/nestrilabs/virtio-nvgpu) - An experimental virtio device for near-native NVIDIA GPU access inside KVM virtual machines.
 * [**drbd-9.2.20 and drbd-9.3.4**](https://forums.linbit.com/t/drbd-9-2-20-and-drbd-9-3-4/1275) - LINBIT's release notes, with a note on how a year of Claude Code use let the team fit more fixes into a cycle than ever: reproducers, DRBD-specific static analyzers, a deterministic simulator. The 9.2.x series is nearly done.
 
@@ -76,7 +76,7 @@ Two frontier model releases shared the week with a widening set of small decisio
 
 ## Hardware & Smart Home
 
-* [**Shelly Group / Schneider Electric takeover**](https://corporate.shelly.com/en/news/shelly-group-has-entered-into-an-investment-agreement-with-schneider-electric-on-the-intended-voluntary-public-takeover) - Schneider Electric intends to offer EUR 70 per share for Shelly Group, roughly EUR 1.2 billion and a 27% premium, with both founders supporting the deal; closing is expected by Q1 2027.
+* [**Shelly Group has entered into an investment agreement with Schneider Electric**](https://corporate.shelly.com/en/news/shelly-group-has-entered-into-an-investment-agreement-with-schneider-electric-on-the-intended-voluntary-public-takeover) - Schneider Electric intends to offer EUR 70 per share for Shelly Group, roughly EUR 1.2 billion and a 27% premium, with both founders supporting the deal; closing is expected by Q1 2027.
 * [**Porsche puts wireless EV charging into production**](https://electrek.co/2026/09/18/its-finally-here-porsche-puts-wireless-ev-charging-into-production-video/) - Wireless Charging arrives on the Cayenne Electric: park over a ground pad and charge at up to 11 kW and about 90% efficiency, with motion and foreign-object detection that stops the process when a living creature comes close.
 
 ## Fun & Off-Topic
