@@ -29,7 +29,7 @@ This week's list is heavy on decompilations and native ports of old console game
 * [**Deno is joining Cloudflare**](https://deno.com/blog/cloudflare) - The runtime team explains why joining Cloudflare is the best place to keep building for the web.
 * [**Our $445M Series D**](https://oxide.computer/blog/our-445m-series-d) - Oxide Computer raising another round for its rack scale on prem cloud.
 * [**containers/fetchit**](https://github.com/containers/fetchit) - Manages the life cycle and configuration of Podman containers straight from Git.
-* [**The people holding up the internet**](https://sheets.works/data-viz/holding-up-the-internet) - Data visualisation about the NTP time servers that four billion phones depend on, kept alive by volunteers in their spare time. The same pattern runs through a lot of critical infrastructure: the timezone database, xz and many other projects rest on one or two maintainers.
+* [**The people holding up the internet**](https://sheets.works/data-viz/holding-up-the-internet) - Data drop that counts who actually maintains 23 pieces of software that phones, browsers and servers depend on, and finds 11 of them resting on one or two people. Paul Eggert keeps the time zone database in his spare time, Todd Miller made 5,408 of the 5,409 sudo changes between 2008 and 2018, and Lasse Collin's xz story is in there too.
 
 ## AI, Agents & Tools
 
