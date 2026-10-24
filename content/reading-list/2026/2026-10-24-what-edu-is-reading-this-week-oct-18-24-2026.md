@@ -68,7 +68,6 @@ A week dominated by PHP2Shell: two critical memory safety bugs in core PHP, foun
 * [**Hitesh754/omarchy-caelestia**](https://github.com/Hitesh754/omarchy-caelestia) - Brings the Caelestia shell to an Omarchy install while keeping Omarchy's system, Hyprland configuration and applications: Omarchy stays the system layer, Caelestia the visual one through Quickshell.
 * [**plusky/halloween-openSUSE**](https://github.com/plusky/halloween-openSUSE) - Cosy autumn Halloween theme for openSUSE Tumbleweed across Plasma, GNOME, Xfce and Sway, with wallpapers, icons, login screens, boot splash, a Firefox theme and a chameleon in a witch hat.
 * [**jordanhubbard/daemonarchy**](https://github.com/jordanhubbard/daemonarchy) - Omarchy on FreeBSD: a bootable 16.0-CURRENT image whose installer asks the same questions as the Omarchy ISO, then installs the Hyprland desktop from the x11-wm/omarchy port.
-* [**Google Rust Style Guide**](https://google.github.io/styleguide/rustguide.html) - Google's rules for Rust code: prefer small crates, avoid Rc and Arc in favour of borrows, accept flexible references, prefer enums over bools in APIs, and keep glob imports out.
 
 ## Cloud, Kubernetes & Networking
 
@@ -79,6 +78,7 @@ A week dominated by PHP2Shell: two critical memory safety bugs in core PHP, foun
 
 * [**jeetrex17/TDrive**](https://github.com/jeetrex17/TDrive) - Go and Wails desktop file manager that uses a private Telegram channel as the drive, with media streaming, encrypted photo and video backup, shared drives and a scriptable CLI.
 * [**weball**](https://www.funwithcomputervision.com/weball/) - Small browser toy where you roll a ball over a page to grow it, with levels and the option to roll up any website you like (pages that build everything client side come out sparse).
+* [**Google Rust Style Guide**](https://google.github.io/styleguide/rustguide.html) - Google's rules for Rust code: prefer small crates, avoid Rc and Arc in favour of borrows, accept flexible references, prefer enums over bools in APIs, and keep glob imports out.
 
 ## Cars, Radio & Hardware
 
