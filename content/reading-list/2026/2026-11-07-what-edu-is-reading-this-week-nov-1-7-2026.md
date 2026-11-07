@@ -22,7 +22,7 @@ tags:
   - gaming
 ---
 
-A week of releases and one proper security scare: openSUSE Leap 16.1 folds the immutable server edition into Leap itself, NetBSD ships the first point release of the 11 branch, Nvidia publishes a Kubernetes management plane for GPU clusters on bare metal, and OpenSSH races out 10.6p2 for a password bypass on Alpine that was already being exploited under nine hours later. Around them, GPT-6 Cyber turning up 81 unknown Firefox flaws, a car head unit jailbroken just to change the clock and a look at what hardcoded timeouts cost on a slow connection.
+A week of releases and one proper security scare: openSUSE Leap 16.1 folds the immutable server edition into Leap itself, NetBSD ships the first point release of the 11 branch, Nvidia publishes a Kubernetes management plane for GPU clusters on bare metal, and OpenSSH races out 10.6p2 for a password bypass on Alpine that was already being exploited under nine hours later. Around them, a car head unit jailbroken just to change the clock, a Playdate game about starlings and a look at what hardcoded timeouts cost on a slow connection.
 
 ## Cloud, Kubernetes and Infrastructure
 
@@ -44,7 +44,6 @@ A week of releases and one proper security scare: openSUSE Leap 16.1 folds the i
 
 ## AI Agents and Tooling
 
-* [**Introducing GPT-6 Cyber**](https://openai.com/index/introducing-gpt-6-cyber/) / [**The Hacker News coverage**](https://thehackernews.com/2026/11/openai-launches-gpt-6-cyber-after-ai.html) - OpenAI's security model, rated Critical under its Preparedness Framework and pitched on alignment as much as capability: it stays inside the scope researchers set in 99.93% of runs (94.49% for GPT-5.6 Cyber) and scores 48.5% on ExploitGym against 32.1% before. With it, researchers found 948 local privilege escalation exploits and 81 previously unknown high severity Firefox flaws that Mozilla is now fixing.
 * [**Karpathy says Claude built HackerTube in about two hours**](https://x.com/IntCyberDigest/status/2116997960164913402) - A YouTube front end that only recommends videos Hacker News keeps praising. Claude sifted 43 million comments from 20 years of HN down to 6,454 videos that people kept recommending, and the only manual step was a Google API key.
 * [**AI Beacon**](https://github.com/manusa/ai-beacon) - Self hosted Go dashboard for people running several Claude Code or OpenCode sessions across machines. A small CLI on each machine reports its sessions to the dashboard you host, the browser view shows what every agent is doing, it notifies you when one is waiting, and you can type straight into that terminal from a phone. Binaries, the container image and the Helm chart are free during the early access phase, with the source to follow.
 
