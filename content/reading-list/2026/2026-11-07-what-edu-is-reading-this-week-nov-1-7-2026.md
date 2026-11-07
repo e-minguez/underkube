@@ -22,7 +22,7 @@ tags:
   - gaming
 ---
 
-A week of releases: openSUSE Leap 16.1 folds the immutable server edition into Leap itself, NetBSD ships the first point release of the 11 branch, Nvidia publishes a Kubernetes management plane for GPU clusters on bare metal and Bluefin opens the beta of its server image. Around them, a car head unit jailbroken just to change the clock, a Playdate game about starlings and a look at what hardcoded timeouts cost on a slow connection.
+A week of releases and one proper security scare: openSUSE Leap 16.1 folds the immutable server edition into Leap itself, NetBSD ships the first point release of the 11 branch, Nvidia publishes a Kubernetes management plane for GPU clusters on bare metal, and OpenSSH races out 10.6p2 for a password bypass on Alpine that was already being exploited under nine hours later. Around them, GPT-6 Cyber turning up 81 unknown Firefox flaws, a car head unit jailbroken just to change the clock and a look at what hardcoded timeouts cost on a slow connection.
 
 ## Cloud, Kubernetes and Infrastructure
 
@@ -44,11 +44,13 @@ A week of releases: openSUSE Leap 16.1 folds the immutable server edition into L
 
 ## AI Agents and Tooling
 
+* [**Introducing GPT-6 Cyber**](https://openai.com/index/introducing-gpt-6-cyber/) / [**The Hacker News coverage**](https://thehackernews.com/2026/11/openai-launches-gpt-6-cyber-after-ai.html) - OpenAI's security model, rated Critical under its Preparedness Framework and pitched on alignment as much as capability: it stays inside the scope researchers set in 99.93% of runs (94.49% for GPT-5.6 Cyber) and scores 48.5% on ExploitGym against 32.1% before. With it, researchers found 948 local privilege escalation exploits and 81 previously unknown high severity Firefox flaws that Mozilla is now fixing.
 * [**Karpathy says Claude built HackerTube in about two hours**](https://x.com/IntCyberDigest/status/2116997960164913402) - A YouTube front end that only recommends videos Hacker News keeps praising. Claude sifted 43 million comments from 20 years of HN down to 6,454 videos that people kept recommending, and the only manual step was a Google API key.
 * [**AI Beacon**](https://github.com/manusa/ai-beacon) - Self hosted Go dashboard for people running several Claude Code or OpenCode sessions across machines. A small CLI on each machine reports its sessions to the dashboard you host, the browser view shows what every agent is doing, it notifies you when one is waiting, and you can type straight into that terminal from a phone. Binaries, the container image and the Helm chart are free during the early access phase, with the source to follow.
 
 ## Development and Security
 
+* [**SSHole: an oversized password walks into Alpine (CVE-2026-123158)**](https://www.helpnetsecurity.com/2026/11/06/openssh-sshole-cve-2026-123158-exploitation/) / [**The Hacker News coverage**](https://thehackernews.com/2026/11/hackers-exploited-openssh-sshole-flaw.html) - OpenSSH 10.6p2, out on 5 November, fixes an authentication bypass in sshd on musl Linux without PAM, which is Alpine's default server build: an attacker who can reach the port logs into an account with no password set by sending an oversized password, one connection and no retries. CVSS 8.1, and Previdian's first observed attempt came under nine hours after publication, with confirmed root on a honeypot running real Alpine and OpenSSH. The bug traces back to a 2016 patch for CVE-2016-6210.
 * [**Stop Hardcoding Your Timeouts**](https://alfy.blog/2026/04/23/stop-hardcoding-your-timeouts.html) - A rant with a point: unconfigurable timeouts are a tax on everyone outside a fast connection. The npx skills installer chokes on a 30K star skills collection with no flag to raise the limit, the issue has been open since February, and the same pattern shows up in Docker tooling.
 * [**Why did you choose the nix you nix?**](https://lobste.rs/s/7fcuxz/why_did_you_choose_nix_you_nix) - Ask thread on which Nix implementation to pick between cppnix, Determinate Nix, Lix and Guix, with 46 comments on the trade offs: the corporate version and its upstreaming habits, Lix fixing papercuts without breaking compatibility, and Guix being a GNU project when you need nonfree software.
 * [**PoC Index**](https://pocindex.io/) - Searchable index of public proof of concept exploits built from GitHub, Nuclei, ExploitDB, Metasploit and Vulhub, with CVSS, EPSS and CISA KEV context on each entry. It counts 176,260 CVEs indexed, 85,393 of them with a public PoC, and 1,257 known to be exploited.
