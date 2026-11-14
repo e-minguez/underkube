@@ -22,7 +22,7 @@ tags:
   - sdr
 ---
 
-Two platform milestones this week: KubeVirt graduates at the CNCF after ten years of putting virtual machines inside Kubernetes, and Red Hat ships OpenShift 5 as an in-place update from 4. Around them, a race condition in mod_http2 to patch, a campaign that used stolen GitHub tokens to push a secret stealer into tens of thousands of repositories, llama.cpp reaching 1.0, and the cheap SDR running out of parts.
+A week of milestones and one very public outage: KubeVirt graduates at the CNCF after ten years of putting virtual machines inside Kubernetes, Red Hat ships OpenShift 5 as an in-place update from 4, and Microsoft took Outlook, Teams and other services down for millions of users on 12 November before restoring them. Around them, a race condition in mod_http2 to patch, a campaign that used stolen GitHub tokens to push a secret stealer into tens of thousands of repositories, llama.cpp reaching 1.0, and the cheap SDR running out of parts.
 
 ## Cloud, Kubernetes and Infrastructure
 
